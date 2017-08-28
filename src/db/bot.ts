@@ -1,13 +1,13 @@
 const login = require('facebook-chat-api');
 const Message = require('./models/message');
 
-const state = {appState: require('./state.json')};
+const loginInfo = {appState: JSON.parse(process.env.FB_STATE)};
 
 const bot: any = {
   init(): void {
     const self = this;
 
-    login(state, (err: any, api: any) => {
+    login(loginInfo, (err: any, api: any) => {
       if (err) {
         return console.error(err);
       }

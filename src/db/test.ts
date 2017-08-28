@@ -1,19 +1,16 @@
 const login = require("facebook-chat-api");
 const jsonfile = require('jsonfile');
 
-const credentials: Object = {
-  email: process.env.FB_EMAIL,
-  password: process.env.FB_PASSWORD,
-};
+const loginInfo = {appState: JSON.parse(process.env.FB_STATE)};
 
-login(credentials, (err: any, api: any) => {
+login(loginInfo, (err: any, api: any) => {
   if (err) {
     return console.error(err);
   }
 
   const state = api.getAppState();
 
-  jsonfile.writeFile(`${__dirname}/state.json`, state, {spaces: 2}, (err: any) => {
+  jsonfile.writeFile(`${__dirname}/state.json`, state, (err: any) => {
     console.error(err);
   });
 });
