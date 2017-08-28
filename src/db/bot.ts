@@ -20,7 +20,7 @@ const bot: any = {
     let newMsgs: any = [];
 
     this.api.listen((err: any, message: any) => {
-      if (message.threadID === 814129402005312) {
+      if (message.threadID === '814129402005312') {
         newMsgs.push(message);
       }
     });

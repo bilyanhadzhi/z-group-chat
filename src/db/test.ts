@@ -8,13 +8,19 @@ login(loginInfo, (err: any, api: any) => {
     return console.error(err);
   }
 
-  const state = api.getAppState();
-
-  jsonfile.writeFile(`${__dirname}/state.json`, state, (err: any) => {
-    console.error(err);
+  api.getThreadList(0, 2, (err: any, list: any) => {
+    list.forEach((thread: any) => console.log(thread.threadID));
   });
+
 });
 
+// const state = api.getAppState();
+
+// jsonfile.writeFile(`${__dirname}/state.json`, state, (err: any) => {
+//   console.error(err);
+// });
+
+// ------- //
 
 // jsonfile.readFile(file, (err: any, data: any) => {
 //   const toInsert: Array<any> = [];

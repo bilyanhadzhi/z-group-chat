@@ -5,8 +5,7 @@ login(loginInfo, function (err, api) {
     if (err) {
         return console.error(err);
     }
-    var state = api.getAppState();
-    jsonfile.writeFile(__dirname + "/state.json", state, function (err) {
-        console.error(err);
+    api.getThreadList(0, 2, function (err, list) {
+        list.forEach(function (thread) { return console.log(thread.threadID); });
     });
 });

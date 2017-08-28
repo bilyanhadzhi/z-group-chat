@@ -60,3 +60,4 @@ typings/
 # personal stuff
 messages.json
 config.*
+test.*
