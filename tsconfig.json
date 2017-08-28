@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "noImplicitAny": true,
+    "removeComments": true,
+    "outDir": "build"
+  },
+  "compileOnSave": true,
+  "include": [
+    "src/*",
+    "src/*/*",
+    "src/*/*/*"
+  ],
+  "exclude": [
+    "node_modules",
+    "**/*.spec.ts"
+  ]
+}

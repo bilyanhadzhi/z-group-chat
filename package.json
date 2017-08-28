@@ -1,0 +1,33 @@
+{
+  "name": "z-group-chat",
+  "version": "1.0.0",
+  "description": "Z class Messenger group chat fun",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start:dev": "nodemon build/app.js",
+    "start": "npm run start:dev"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bilyanhadzhi/z-group-chat.git"
+  },
+  "author": "Bilyan Hadzhi",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/bilyanhadzhi/z-group-chat/issues"
+  },
+  "homepage": "https://github.com/bilyanhadzhi/z-group-chat#readme",
+  "dependencies": {
+    "express": "^4.15.4",
+    "express-handlebars": "^3.0.0",
+    "facebook-chat-api": "github:Schmavery/facebook-chat-api",
+    "jsonfile": "^3.0.1",
+    "mongoose": "^4.11.8",
+    "passport": "^0.4.0",
+    "passport-facebook": "^2.1.1"
+  },
+  "devDependencies": {
+    "nodemon": "^1.11.0"
+  }
+}
