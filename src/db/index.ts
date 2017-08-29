@@ -1,8 +1,5 @@
 const mongoose = require('mongoose');
 
-const bot = require('./bot');
-const Message = require('./models/message');
-
 const uri = process.env.MONGODB_URI;
 mongoose.Promise = global.Promise;
 
@@ -12,9 +9,13 @@ const database = mongoose.connection;
 database.on('error', console.error.bind(console, 'connection error: '));
 
 database.once('open', () => {
-  console.log('hey im in');
+  const shouldUseBot = process.env.NO_BOT.toLowerCase() !== 'true';
 
-  bot.init();
+  if (shouldUseBot) {
+    const bot = require('./bot');
+
+    bot.init();
+  }
 });
 
 module.exports = database;
