@@ -1,4 +1,5 @@
 var express = require('express');
+var bodyParser = require('body-parser');
 var session = require('express-session');
 var handlebars = require('express-handlebars');
 var path = require('path');
@@ -14,6 +15,7 @@ var dirs = {
 var app = express();
 app.use(express.static(dirs.public));
 app.use(session({ secret: 'mySecret', cookie: { maxAge: 60000 } }));
+app.use(bodyParser.urlencoded({ extended: true }));
 var hbs = handlebars.create({
     partialsDir: dirs.partials
 });
