@@ -51,6 +51,7 @@ var bot = {
             .findOne()
             .sort({ timestamp: -1 })
             .exec(function (err, msg) {
+            console.log(msg.body);
             _this.api.getThreadHistory(_this.threadID, 50, undefined, function (err, messages) {
                 if (messages[messages.length - 1].timestamp !== msg.timestamp) {
                     var newMsgs = [];

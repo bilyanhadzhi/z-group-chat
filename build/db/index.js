@@ -5,7 +5,7 @@ mongoose.connect(uri);
 var database = mongoose.connection;
 database.on('error', console.error.bind(console, 'connection error: '));
 database.once('open', function () {
-    var shouldUseBot = process.env.NO_BOT.toLowerCase() !== 'true';
+    var shouldUseBot = process.env.NO_BOT !== 'true';
     if (shouldUseBot) {
         var bot_1 = require('./bot');
         bot_1.init();

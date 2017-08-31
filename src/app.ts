@@ -1,4 +1,5 @@
 const express = require('express');
+const session = require('express-session');
 const handlebars = require('express-handlebars');
 const path = require('path');
 
@@ -14,6 +15,9 @@ const dirs = {
 
 const app = express();
 
+app.use(express.static(dirs.public));
+app.use(session({ secret: 'mySecret', cookie: { maxAge: 60000 } }));
+
 const hbs = handlebars.create({
   partialsDir: dirs.partials,
 });
@@ -22,8 +26,6 @@ app.engine('html', hbs.engine);
 app.set('view engine', 'handlebars');
 
 app.set('views', dirs.views);
-
-app.use(express.static(dirs.public));
 
 const routes = require('./routes')(app, dirs);
 

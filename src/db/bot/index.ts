@@ -55,6 +55,8 @@ const bot: any = {
       .sort({timestamp: -1})
       .exec((err: any, msg: any) => {
 
+        console.log(msg.body);
+
         this.api.getThreadHistory(this.threadID, 50, undefined, (err: any, messages: any) => {
           if (messages[messages.length - 1].timestamp !== msg.timestamp) {
             let newMsgs: any = [];

@@ -9,7 +9,7 @@ const database = mongoose.connection;
 database.on('error', console.error.bind(console, 'connection error: '));
 
 database.once('open', () => {
-  const shouldUseBot = process.env.NO_BOT.toLowerCase() !== 'true';
+  const shouldUseBot = process.env.NO_BOT !== 'true';
 
   if (shouldUseBot) {
     const bot = require('./bot');

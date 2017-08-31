@@ -1,0 +1,94 @@
+@import url('https://fonts.googleapis.com/css?family=Quicksand');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  border: 0;
+  font-family: 'Quicksand', sans-serif;
+}
+
+html, body {
+  height: 100%;
+}
+
+input::placeholder {
+  color: rgba(255, 255, 255, 0.5);
+  transition: 0.1s;
+}
+
+input:focus::placeholder {
+  opacity: 0;
+}
+
+#login-container {
+  height: 100vh;
+  width: 100vw;
+  background-image: url('/img/login-bg.jpg');
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+#login-container div {
+  background-color: rgba(0, 0, 0, 0.45);
+  padding: 60px;
+  box-sizing: content-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  border-radius: 3px;
+}
+
+#login-container div h1 {
+  color: rgba(255, 255, 255, 1);
+  /* text-shadow: 1px 1px rgba(0, 0, 0, 0.5); */
+}
+
+#login-container div form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 60px;
+}
+
+#login-container div form * {
+  font-size: 1.2rem;
+  padding: 8px;
+}
+
+#login-container div form *:focus {
+  outline: none;
+}
+
+#login-container div form input[type='password'] {
+  margin-bottom: 20px;
+  background-color: transparent;
+  color: rgba(255, 255, 255, 1);
+  text-align: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.8);
+  transition: all 0.2s;
+}
+
+#login-container div form input[type='password']:focus {
+  transform: scale(1.1);
+}
+
+#login-container div form input[type='submit'] {
+  width: 120px;
+  border-radius: 30px;
+  background-color: rgba(0, 0, 0, 0.3);
+  color: rgba(255, 255, 255, 1);
+  cursor: pointer;
+  border: 2px solid rgba(255, 255, 255, 0.5);
+  transition: all 0.2s;
+}
+
+#login-container div form input[type='submit']:hover,
+#login-container div form input[type='submit']:focus {
+  background-color: rgba(0, 0, 0, 0.5);
+}
