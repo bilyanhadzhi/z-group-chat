@@ -3,7 +3,7 @@ const bcrypt = require('bcrypt');
 
 module.exports = (app: any, dirs: any) => {
 
-  app.use((req: any, res: any, next: any) => {
+  app.use((req: any, res: any, next: Function) => {
     const url = req.originalUrl;
 
     if (req.session.loggedIn) {
@@ -14,12 +14,18 @@ module.exports = (app: any, dirs: any) => {
   });
 
   app.get('/', (req: any, res: any) => {
-    res.send('hallo');
+    const options = {
+      title: 'Home',
+      loggedIn: req.session.loggedIn,
+    };
+
+    res.render('index', options);
   });
 
   app.get('/auth', (req: any, res: any) => {
-    res.render('auth.html');
+    res.render('auth', {title: 'Log in'});
   });
+
   app.post('/auth', (req: any, res: any) => {
     bcrypt.compare(req.body.password, process.env.HASH, (err: any, result: boolean) => {
       if (result === true) {
@@ -29,5 +35,12 @@ module.exports = (app: any, dirs: any) => {
         res.redirect('/auth');
       }
     });
+  });
+
+  app.get('/log_out', (req: any, res: any) => {
+    if (req.session.loggedIn) {
+      req.session.loggedIn = false;
+      res.redirect('/auth');
+    }
   });
 };

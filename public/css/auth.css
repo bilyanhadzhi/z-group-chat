@@ -5,11 +5,16 @@
   padding: 0;
   box-sizing: border-box;
   border: 0;
-  font-family: 'Quicksand', sans-serif;
 }
 
 html, body {
   height: 100%;
+}
+
+body {
+  min-width: 310px;
+  padding: 0;
+  font-family: 'Quicksand', sans-serif;
 }
 
 input::placeholder {
@@ -21,7 +26,7 @@ input:focus::placeholder {
   opacity: 0;
 }
 
-@-webkit-keyframes autofill {
+@keyframes autofill {
   to {
     color: rgba(255, 255, 255, 1);
     background: transparent;
@@ -29,6 +34,8 @@ input:focus::placeholder {
 }
 
 input:-webkit-autofill {
+  animation-name: autofill;
+  animation-fill-mode: both;
   -webkit-animation-name: autofill;
   -webkit-animation-fill-mode: both;
 }
@@ -46,8 +53,9 @@ input:-webkit-autofill {
 }
 
 #login-container div {
+  max-width: 100%;
   background-color: rgba(0, 0, 0, 0.45);
-  padding: 60px;
+  padding: 40px 25px;
   box-sizing: content-box;
   display: flex;
   flex-direction: column;
@@ -58,7 +66,6 @@ input:-webkit-autofill {
 
 #login-container div h1 {
   color: rgba(255, 255, 255, 1);
-  /* text-shadow: 1px 1px rgba(0, 0, 0, 0.5); */
 }
 
 #login-container div form {
@@ -91,6 +98,7 @@ input:-webkit-autofill {
 }
 
 #login-container div form input[type='submit'] {
+  font-family: 'Quicksand', sans-serif;
   width: 120px;
   border-radius: 30px;
   background-color: rgba(0, 0, 0, 0.3);
@@ -103,4 +111,10 @@ input:-webkit-autofill {
 #login-container div form input[type='submit']:hover,
 #login-container div form input[type='submit']:focus {
   background-color: rgba(0, 0, 0, 0.5);
+}
+
+@media screen and (min-width: 400px) {
+  #login-container div {
+    padding: 60px 50px;
+  }
 }

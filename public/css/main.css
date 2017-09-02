@@ -1,0 +1,92 @@
+@import url('https://fonts.googleapis.com/css?family=Quicksand');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  border: 0;
+}
+
+a {
+  text-decoration: none;
+  color: initial;
+  cursor: pointer;
+}
+
+body {
+  color: #333;
+  min-width: 310px;
+  background-image: url('/img/main-bg.png');
+  padding: 0;
+  font-family: 'Quicksand', sans-serif;
+}
+
+.container {
+  min-width: 310px;
+  max-width: 100vw;
+  padding: 20px 5%;
+}
+
+#navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 48px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  background-color: rgba(255, 255, 255, 1);
+}
+
+#navbar ul {
+  list-style: none;
+  height: 100%;
+  display: flex;
+}
+
+#navbar a {
+  padding: 0 20px;
+  line-height: 3;
+  transition: all 0.2s;
+  font-weight: bold;
+  color: rgba(100, 100, 100, 1);
+}
+
+.left li {
+  margin-left: -18px;
+}
+
+.right li {
+  margin-right: -18px;
+}
+
+#navbar li {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  color: #212121;
+  cursor: pointer;
+}
+
+#navbar a:hover {
+  color: rgba(2, 119, 189, 1);
+}
+
+/* Media queries */
+@media screen and (min-width: 600px) {
+  #navbar a {
+    padding: 0 25px;
+  }
+
+  .left li {
+    margin-left: -25px;
+  }
+
+  .right li {
+    margin-right: -25px;
+  }
+}
+
+@media screen and (min-width: 800px) {
+  .container {
+    padding: 20px 20%;
+  }
+}

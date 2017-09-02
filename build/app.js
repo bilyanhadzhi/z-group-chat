@@ -9,18 +9,33 @@ var dirs = {
     src: rootPath + "/src",
     build: rootPath + "/build",
     views: rootPath + "/build/views",
+    layouts: rootPath + "/build/views/layouts",
     partials: rootPath + "/build/views/partials",
     public: rootPath + "/public"
 };
 var app = express();
 app.use(express.static(dirs.public));
-app.use(session({ secret: 'mySecret', cookie: { maxAge: 60000 } }));
+app.use(session({
+    secret: process.env.SESSION_SECRET,
+    cookie: { maxAge: 30 * 60000 }
+}));
 app.use(bodyParser.urlencoded({ extended: true }));
-var hbs = handlebars.create({
-    partialsDir: dirs.partials
-});
-app.engine('html', hbs.engine);
-app.set('view engine', 'handlebars');
+app.engine('html', handlebars({
+    extname: '.html',
+    defaultLayout: 'main',
+    layoutsDir: dirs.layouts,
+    partialsDir: dirs.partials,
+    helpers: {
+        section: function (name, options) {
+            if (!this._sections) {
+                this._sections = {};
+            }
+            this._sections[name] = options.fn(this);
+            return null;
+        }
+    }
+}));
 app.set('views', dirs.views);
+app.set('view engine', 'html');
 var routes = require('./routes')(app, dirs);
 app.listen(process.env.PORT || 3000);

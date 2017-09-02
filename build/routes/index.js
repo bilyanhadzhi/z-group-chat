@@ -11,10 +11,14 @@ module.exports = function (app, dirs) {
         }
     });
     app.get('/', function (req, res) {
-        res.send('hallo');
+        var options = {
+            title: 'Home',
+            loggedIn: req.session.loggedIn
+        };
+        res.render('index', options);
     });
     app.get('/auth', function (req, res) {
-        res.render('auth.html');
+        res.render('auth', { title: 'Log in' });
     });
     app.post('/auth', function (req, res) {
         bcrypt.compare(req.body.password, process.env.HASH, function (err, result) {
@@ -26,5 +30,11 @@ module.exports = function (app, dirs) {
                 res.redirect('/auth');
             }
         });
+    });
+    app.get('/log_out', function (req, res) {
+        if (req.session.loggedIn) {
+            req.session.loggedIn = false;
+            res.redirect('/auth');
+        }
     });
 };

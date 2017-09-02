@@ -10,6 +10,7 @@ const dirs = {
   src: `${rootPath}/src`,
   build: `${rootPath}/build`,
   views: `${rootPath}/build/views`,
+  layouts: `${rootPath}/build/views/layouts`,
   partials: `${rootPath}/build/views/partials`,
   public: `${rootPath}/public`,
 };
@@ -17,17 +18,33 @@ const dirs = {
 const app = express();
 
 app.use(express.static(dirs.public));
-app.use(session({ secret: 'mySecret', cookie: { maxAge: 60000 } }));
+app.use(session({
+  secret: process.env.SESSION_SECRET,
+  cookie: { maxAge: 30 * 60000 },
+}));
+
 app.use(bodyParser.urlencoded({ extended: true }));
 
-const hbs = handlebars.create({
+app.engine('html', handlebars({
+  extname: '.html',
+  defaultLayout: 'main',
+  layoutsDir: dirs.layouts,
   partialsDir: dirs.partials,
-});
+  helpers: {
+    section(name: any, options: any): any {
+      if (!this._sections) {
+        this._sections = {};
+      }
 
-app.engine('html', hbs.engine);
-app.set('view engine', 'handlebars');
+      this._sections[name] = options.fn(this);
+
+      return null;
+    }
+  }
+}));
 
 app.set('views', dirs.views);
+app.set('view engine', 'html');
 
 const routes = require('./routes')(app, dirs);
 
