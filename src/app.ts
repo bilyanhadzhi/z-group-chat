@@ -39,7 +39,14 @@ app.engine('html', handlebars({
       this._sections[name] = options.fn(this);
 
       return null;
-    }
+    },
+    if_text_message(msg: any, options: any) {
+      if(msg.type === 'message' && msg.body !== '') {
+        return options.fn(this);
+      } else {
+        return options.inverse(this);
+      }
+    },
   }
 }));
 

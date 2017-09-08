@@ -4,6 +4,7 @@ const messageSchema = mongoose.Schema({
   type: String,
   senderName: String,
   senderID: String,
+  senderThumbSrc: String,
   body: String,
   attachments: Array,
   timestamp: Number,
