@@ -6,7 +6,6 @@
   },
   "compileOnSave": true,
   "include": [
-    "public/js/*",
     "src/*",
     "src/*/*",
     "src/*/*/*"

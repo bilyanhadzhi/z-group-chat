@@ -31,7 +31,7 @@ app.engine('html', handlebars({
   layoutsDir: dirs.layouts,
   partialsDir: dirs.partials,
   helpers: {
-    section(name: any, options: any): any {
+    section(name: any, options: any): null {
       if (!this._sections) {
         this._sections = {};
       }
@@ -40,13 +40,20 @@ app.engine('html', handlebars({
 
       return null;
     },
-    if_text_message(msg: any, options: any) {
+    if_text_message(msg: any, options: any): any {
       if(msg.type === 'message' && msg.body !== '') {
         return options.fn(this);
       } else {
         return options.inverse(this);
       }
     },
+    convert_to_time(unixTimestamp: any, options: any): any {
+      unixTimestamp = parseInt(unixTimestamp);
+
+      const date = new Date(unixTimestamp);
+
+      return `${date.toLocaleTimeString('bg-BG', { timeZone: 'Europe/Sofia', hour: '2-digit', minute: '2-digit' })}`;
+    }
   }
 }));
 

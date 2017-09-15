@@ -110,11 +110,15 @@ hr {
   padding: 9px 0;
   display: flex;
   align-items: center;
+  width: 100%;
+  position: relative;
 }
 
 .chat-message-container > .profile-image {
   border-radius: 50%;
   margin-left: 9px;
+  width: 24px;
+  height: 24px;
 }
 
 .chat-message-container > .chat-message-body {
@@ -131,10 +135,14 @@ hr {
   align-items: center;
   border-radius: 20px;
   max-width: 70%;
+  cursor: pointer;
 }
 
-.chat-browser-container > .chat-message-attachment:hover {
-  filter: blur(20px);
+.chat-message-timestamp {
+  position: absolute;
+  right: 9px;
+  font-size: 0.9rem;
+  color: rgba(0, 0, 0, 0.5);
 }
 
 .pagination {

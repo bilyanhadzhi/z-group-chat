@@ -40,6 +40,11 @@ app.engine('html', handlebars({
             else {
                 return options.inverse(this);
             }
+        },
+        convert_to_time: function (unixTimestamp, options) {
+            unixTimestamp = parseInt(unixTimestamp);
+            var date = new Date(unixTimestamp);
+            return "" + date.toLocaleTimeString('bg-BG', { timeZone: 'Europe/Sofia', hour: '2-digit', minute: '2-digit' });
         }
     }
 }));

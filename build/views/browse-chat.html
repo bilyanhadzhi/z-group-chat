@@ -8,17 +8,15 @@
     <hr>
     <div id="chat-browser">
       {{#each messages}}
+      <div class="chat-message-container">
+        <img src="{{this.senderThumbSrc}}" alt="profile-image" class="profile-image">
         {{#if_text_message this }}
-          <div class="chat-message-container">
-            <img src="{{this.senderThumbSrc}}" alt="profile-image" class="profile-image">
-            <span class="chat-message-body">{{this.body}}</span>
-          </div>
+          <span class="chat-message-body">{{this.body}}</span>
         {{else}}
-          <div class="chat-message-container">
-            <img src="{{this.senderThumbSrc}}" alt="profile-image" class="profile-image">
-            <img class="chat-message-attachment" src="{{this.attachments.0.previewUrl}}"/>
-          </div>
+          <img class="chat-message-attachment" src="{{this.attachments.0.previewUrl}}"/>
         {{/if_text_message}}
+        <span class="chat-message-timestamp">{{#convert_to_time this.timestamp}}{{/convert_to_time}}</span>
+      </div>
       {{/each}}
     </div>
     <hr>

@@ -40,6 +40,10 @@ app.engine('html', handlebars({
             else {
                 return options.inverse(this);
             }
+        },
+        convert_to_time: function (unixTimestamp, options) {
+            unixTimestamp = parseInt(unixTimestamp);
+            return unixTimestamp;
         }
     }
 }));
