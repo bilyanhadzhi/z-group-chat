@@ -10,7 +10,7 @@ login(loginInfo, (err: any, api: any) => {
     return console.error(err);
   }
 
-  const participantIDs = [
+  const participantIDs: any = [
     100000545900203,
     100000791752985,
     100000921515627,
@@ -57,7 +57,7 @@ login(loginInfo, (err: any, api: any) => {
       console.log(participant);
     });
 
-    // Member.insertMany(toInsert);
+    Member.insertMany(toInsert);
   });
 });
 
@@ -68,6 +68,8 @@ login(loginInfo, (err: any, api: any) => {
 // });
 
 // ------- //
+
+// const file = `${__dirname}/messages.json`;
 
 // jsonfile.readFile(file, (err: any, data: any) => {
 //   const toInsert: Array<any> = [];

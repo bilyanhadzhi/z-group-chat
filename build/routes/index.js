@@ -32,7 +32,7 @@ module.exports = function (app, dirs) {
         var messagesPromise = Message
             .find()
             .sort({ 'timestamp': -1 })
-            .limit(10)
+            .limit(50)
             .exec();
         var promises = [lenPromise, messagesPromise];
         Promise.all(promises)
@@ -40,7 +40,6 @@ module.exports = function (app, dirs) {
             data.messagesCount = values[0];
             data.messages = values[1].reverse();
             res.render('browse-chat', data);
-            console.log(data.messages[data.messages.length - 1]);
         });
     });
     app.get('/auth', function (req, res) {

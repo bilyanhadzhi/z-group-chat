@@ -42,7 +42,7 @@ module.exports = (app: any, dirs: any) => {
       Message
         .find()
         .sort({ 'timestamp': -1 })
-        .limit(10)
+        .limit(50)
         .exec();
 
     const promises = [lenPromise, messagesPromise];
@@ -53,8 +53,6 @@ module.exports = (app: any, dirs: any) => {
         data.messages = values[1].reverse();
 
         res.render('browse-chat', data);
-
-        console.log(data.messages[data.messages.length - 1])
       });
   });
 

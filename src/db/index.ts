@@ -47,14 +47,6 @@ database.once('open', () => {
     '100000872904607': 'https://scontent-frt3-2.xx.fbcdn.net/v/t1.0-1/p32x32/12063649_971100539595700_4731105284704985010_n.jpg?oh=17b638e16b931dcaccd1a1cc9d2a6d2a&oe=5A212740'
   };
 
-  // Message
-  //   .find({'senderID': '100000872904607'})
-  //   .limit(10)
-  //   .sort({'timestamp': -1})
-  //   .then((obj: any) => {
-  //     obj.forEach((message: any) => console.log(message));
-  //   });
-
   Object.keys(participantIDs).forEach((key: any) => {
     Message
       .updateMany({'senderID': key},

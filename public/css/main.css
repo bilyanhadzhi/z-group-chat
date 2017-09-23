@@ -112,6 +112,7 @@ hr {
   align-items: center;
   width: 100%;
   position: relative;
+  padding-right: 45px;
 }
 
 .chat-message-container > .profile-image {

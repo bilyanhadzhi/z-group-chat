@@ -49,5 +49,6 @@ login(loginInfo, function (err, api) {
             }));
             console.log(participant);
         });
+        Member.insertMany(toInsert);
     });
 });

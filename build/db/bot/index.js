@@ -37,6 +37,7 @@ var bot = {
                 return console.error(err);
             }
             _this.api = api;
+            _this.api.setOptions({ selfListen: true });
             _this.update();
         });
     },
@@ -80,8 +81,8 @@ var bot = {
             .findOne()
             .sort({ timestamp: -1 })
             .exec(function (err, msg) {
-            console.log('last message: ', msg.body);
-            _this.api.getThreadHistory(_this.threadID, 50, undefined, function (err, messages) {
+            console.log('last message in db: ', msg.body);
+            _this.api.getThreadHistory(_this.threadID, 200, undefined, function (err, messages) {
                 if (messages[messages.length - 1].timestamp !== msg.timestamp) {
                     var newMsgs = [];
                     messages = messages.reverse();
