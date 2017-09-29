@@ -4,20 +4,20 @@
 
 <div class="outer-container">
   <div class="inner-container chat-browser-container">
-    <h3>👑DebilZ👑 ({{messagesCount}} messages)</h3>
+    <h3>👑DebilZ👑</h3>
     <hr>
     <div id="chat-browser">
-      {{#each messages}}
+      <!-- {{#each messages}}
       <div class="chat-message-container">
-        <img src="{{this.senderThumbSrc}}" alt="profile-image" class="profile-image">
+        <img src="{{this.senderThumbSrc}}" alt="img" class="profile-image">
         {{#if_text_message this }}
           <span class="chat-message-body">{{this.body}}</span>
         {{else}}
-          <img class="chat-message-attachment" src="{{this.attachments.0.previewUrl}}"/>
+          <img class="chat-message-attachment" src="{{this.attachments.0.previewUrl}}" alt="attachment"/>
         {{/if_text_message}}
         <span class="chat-message-timestamp">{{#convert_to_time this.timestamp}}{{/convert_to_time}}</span>
       </div>
-      {{/each}}
+      {{/each}} -->
     </div>
     <hr>
     <div class="pagination">

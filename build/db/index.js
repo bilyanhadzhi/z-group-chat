@@ -39,10 +39,12 @@ database.once('open', function () {
         '100018364275725': 'https://scontent-frt3-2.xx.fbcdn.net/v/t1.0-1/p32x32/21105919_128667684422040_7182370801210885063_n.jpg?oh=9b0d67bc712684aa56b3a8fd1d2bf73d&oe=5A5719E9',
         '100000872904607': 'https://scontent-frt3-2.xx.fbcdn.net/v/t1.0-1/p32x32/12063649_971100539595700_4731105284704985010_n.jpg?oh=17b638e16b931dcaccd1a1cc9d2a6d2a&oe=5A212740'
     };
-    Object.keys(participantIDs).forEach(function (key) {
-        Message
-            .updateMany({ 'senderID': key }, { $set: { 'senderThumbSrc': participantIDs[key] } })
-            .exec();
-    });
+    setInterval(function () {
+        Object.keys(participantIDs).forEach(function (key) {
+            Message
+                .updateMany({ 'senderID': key }, { $set: { 'senderThumbSrc': participantIDs[key] } })
+                .exec();
+        });
+    }, 60 * 1000);
 });
 module.exports = database;

@@ -27,34 +27,34 @@ module.exports = (app: any, dirs: any) => {
 
   app.get('/browse-chat', (req: any, res: any) => {
     const data: any = {
-      title: 'Home',
+      title: 'Browse the chat',
       loggedIn: req.session.loggedIn,
-      messageCount: null,
+      // messageCount: null,
     };
 
-    const lenPromise =
-      Message
-        .find()
-        .count()
-        .exec();
+    // const lenPromise =
+    //   Message
+    //     .find()
+    //     .count()
+    //     .exec();
 
-    const messagesPromise =
-      Message
-        .find()
-        .sort({ 'timestamp': -1 })
-        .limit(50)
-        .exec();
+    // const messagesPromise =
+    //   Message
+    //     .find()
+    //     .sort({ 'timestamp': -1 })
+    //     .limit(50)
+    //     .exec();
 
-    const promises = [lenPromise, messagesPromise];
+    // const promises = [lenPromise, messagesPromise];
 
-    Promise.all(promises)
-      .then((values: any) => {
-        data.messagesCount = values[0];
-        data.messages = values[1].reverse();
+    // Promise.all(promises)
+    //   .then((values: any) => {
+    //     data.messagesCount = values[0];
+    //     data.messages = values[1].reverse();
 
-        res.render('browse-chat', data);
-      });
-  });
+    //   });
+      res.render('browse-chat', data);
+    });
 
   app.get('/auth', (req: any, res: any) => {
     res.render('auth', {title: 'Log in'});
@@ -83,12 +83,27 @@ module.exports = (app: any, dirs: any) => {
 
   // API
   app.get('/api/get-messages', (req: any, res: any) => {
+
+    if (parseInt(req.query.amount) != req.query.amount) {
+      res
+        .status(422)
+        .send({'error': 'amount must be a number'});
+    }
+
     const params: any = {
-      from: req.body['from'],
-      to: req.body['to'],
-      messageCount: req.body['message-count'],
+      before: req.query.before,
+      amount: parseInt(req.query.amount),
     };
 
-    res.send(params);
+    Message
+      .find({'timestamp': { $lte: params.before }})
+      .sort({'timestamp': -1})
+      .limit(params.amount)
+      .exec()
+      .catch((err: any) => console.error(err))
+      .then((messages: any) => {
+        res.send(messages);
+      });
+
   });
 };

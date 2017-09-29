@@ -21,26 +21,10 @@ module.exports = function (app, dirs) {
     });
     app.get('/browse-chat', function (req, res) {
         var data = {
-            title: 'Home',
-            loggedIn: req.session.loggedIn,
-            messageCount: null
+            title: 'Browse the chat',
+            loggedIn: req.session.loggedIn
         };
-        var lenPromise = Message
-            .find()
-            .count()
-            .exec();
-        var messagesPromise = Message
-            .find()
-            .sort({ 'timestamp': -1 })
-            .limit(50)
-            .exec();
-        var promises = [lenPromise, messagesPromise];
-        Promise.all(promises)
-            .then(function (values) {
-            data.messagesCount = values[0];
-            data.messages = values[1].reverse();
-            res.render('browse-chat', data);
-        });
+        res.render('browse-chat', data);
     });
     app.get('/auth', function (req, res) {
         res.render('auth', { title: 'Log in' });
@@ -65,11 +49,22 @@ module.exports = function (app, dirs) {
         }
     });
     app.get('/api/get-messages', function (req, res) {
+        if (parseInt(req.query.amount) != req.query.amount) {
+            res
+                .status(422)
+                .send({ 'error': 'amount must be a number' });
+        }
         var params = {
-            from: req.body['from'],
-            to: req.body['to'],
-            messageCount: req.body['message-count']
+            before: req.query.before,
+            amount: parseInt(req.query.amount)
         };
-        res.send(params);
+        Message
+            .find({ 'timestamp': { $lte: params.before } })
+            .sort({ 'timestamp': -1 })
+            .limit(params.amount)
+            .exec()["catch"](function (err) { return console.error(err); })
+            .then(function (messages) {
+            res.send(messages);
+        });
     });
 };

@@ -54,10 +54,10 @@ var bot = {
                 newMsgs.forEach(function (msg) {
                     console.log(participantIDs[msg.senderID.toString()]);
                     msg = new Message({
-                        senderThumbSrc: participantIDs[msg.senderID.toString()],
                         type: msg.type,
                         senderName: msg.senderName,
                         senderID: msg.senderID,
+                        senderThumbSrc: participantIDs[msg.senderID.toString()],
                         body: msg.body,
                         attachments: msg.attachments,
                         timestamp: msg.timestamp,
