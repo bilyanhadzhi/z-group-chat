@@ -29,30 +29,7 @@ module.exports = (app: any, dirs: any) => {
     const data: any = {
       title: 'Browse the chat',
       loggedIn: req.session.loggedIn,
-      // messageCount: null,
     };
-
-    // const lenPromise =
-    //   Message
-    //     .find()
-    //     .count()
-    //     .exec();
-
-    // const messagesPromise =
-    //   Message
-    //     .find()
-    //     .sort({ 'timestamp': -1 })
-    //     .limit(50)
-    //     .exec();
-
-    // const promises = [lenPromise, messagesPromise];
-
-    // Promise.all(promises)
-    //   .then((values: any) => {
-    //     data.messagesCount = values[0];
-    //     data.messages = values[1].reverse();
-
-    //   });
       res.render('browse-chat', data);
     });
 
@@ -84,19 +61,35 @@ module.exports = (app: any, dirs: any) => {
   // API
   app.get('/api/get-messages', (req: any, res: any) => {
 
-    if (parseInt(req.query.amount) != req.query.amount) {
+    if (req.query.amount && parseInt(req.query.amount) != req.query.amount) {
       res
         .status(422)
         .send({'error': 'amount must be a number'});
     }
 
+    const after = req.query.after ? parseInt(req.query.after) : null;
+    const upTo = req.query.up_to ? parseInt(req.query.up_to) : new Date().getTime();
+    let amount = null;
+
+    if (parseInt(req.query.amount) != req.query.amount) {
+      amount = 50;
+    } else if (parseInt(req.query.amount) < 1) {
+      res.send([]);
+    } else if (parseInt(req.query.amount) > 50) {
+      amount = 50;
+    }
+
     const params: any = {
-      before: req.query.before,
-      amount: parseInt(req.query.amount),
+      upTo: upTo,
+      after: after,
+      amount: amount,
     };
 
-    Message
-      .find({'timestamp': { $lte: params.before }})
+    console.log(params);
+
+    if (params.after) {
+      Message
+      .find({'timestamp': { '$gt': params.after }})
       .sort({'timestamp': -1})
       .limit(params.amount)
       .exec()
@@ -104,6 +97,54 @@ module.exports = (app: any, dirs: any) => {
       .then((messages: any) => {
         res.send(messages);
       });
+    } else {
+      Message
+        .find({'timestamp': { '$lte': params.upTo }})
+        .sort({'timestamp': -1})
+        .limit(params.amount)
+        .exec()
+        .catch((err: any) => console.error(err))
+        .then((messages: any) => {
+          res.send(messages);
+        });
+    }
+  });
 
+  app.get('/api/stats', (req: any, res: any) => {
+    let stats: any = {
+      leaderboard: {
+        labels: [],
+        values: [],
+      },
+    };
+
+    Member
+      .find({})
+      .exec()
+      .catch((err: any) => console.error(err))
+      .then((members: any) => {
+        const promises: Promise<any>[] = [];
+
+        members.forEach((member: any) => {
+          promises.push(
+            Message
+              .find({'senderID': member.memberID})
+              .count()
+              .exec());
+            // .catch((e: any) => console.error(e))
+            // .then((count: any) => {
+              // stats.leaderboard.labels.push(member.firstName);
+            //   stats.leaderboard.values.push(count);
+            // }));
+        });
+
+        Promise.all(promises)
+          .then((values: any) => {
+            members.forEach((member: any) => stats.leaderboard.labels.push(member.firstName));
+            values.forEach((value: any) => stats.leaderboard.values.push(value));
+
+            res.json(stats);
+          });
+      });
   });
 };

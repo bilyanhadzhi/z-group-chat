@@ -34,21 +34,4 @@ login(loginInfo, function (err, api) {
         100000872904607,
     ];
     var toInsert = [];
-    api.getUserInfo(participantIDs, function (err, obj) {
-        Object.keys(obj).forEach(function (participantID) {
-            var participant = obj[participantID];
-            toInsert.push(new Member({
-                memberID: participantID,
-                name: participant.name,
-                firstName: participant.firstName,
-                vanity: participant.vanity,
-                thumbSrc: participant.thumbSrc,
-                profileUrl: participant.profileUrl,
-                gender: participant.gender,
-                isBirthday: participant.isBirthday
-            }));
-            console.log(participant);
-        });
-        Member.insertMany(toInsert);
-    });
 });

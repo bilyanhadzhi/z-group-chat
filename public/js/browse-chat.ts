@@ -2,19 +2,33 @@ document.addEventListener('DOMContentLoaded', () => {
   const chat = {
     messages: [],
     settings: {
-      messagesCount: 50,
+      messagesPerLoad: 50,
     },
     cacheDom() {
       this.chatBrowser = document.getElementById('chat-browser');
+
+      this.buttons = {
+        first: document.getElementById('first-button'),
+        prev: document.getElementById('prev-button'),
+        next: document.getElementById('next-button'),
+        last: document.getElementById('last-button'),
+      };
     },
     init(): void {
       this.cacheDom();
+      this.bindEvents();
 
       this.scrollToBottom();
 
-      this.loadMessages();
+      this.loadMessages(undefined, undefined, undefined);
     },
-    render() {
+    bindEvents(): void {
+      this.buttons.first.addEventListener('click', this.loadFirstPage.bind(this));
+      this.buttons.prev.addEventListener('click', this.loadPrevPage.bind(this));
+      this.buttons.next.addEventListener('click', this.loadNextPage.bind(this));
+      this.buttons.last.addEventListener('click', this.loadLastPage.bind(this));
+    },
+    render(): void {
       this.cleanChatBrowser();
 
       this.messages.forEach((message: any) => {
@@ -27,8 +41,11 @@ document.addEventListener('DOMContentLoaded', () => {
         authorImgNode.classList.add('profile-image');
         msgContainer.appendChild(authorImgNode);
 
-        const isTextMessage = message.type === 'message' && message.body !== '';
-        if (isTextMessage) {
+        const isTextMessage = message.type === 'message';
+        const isEvent = message.type === 'event';
+        const isEmpty = message.body === '';
+
+        if (isTextMessage && !isEmpty) {
           const msgBodyNode = document.createElement('span');
           msgBodyNode.classList.add('chat-message-body');
 
@@ -36,12 +53,23 @@ document.addEventListener('DOMContentLoaded', () => {
           msgBodyNode.appendChild(msgBodyTextNode);
 
           msgContainer.appendChild(msgBodyNode);
-        } else {
+        } else if (isTextMessage && isEmpty) {
           const msgBodyNode = document.createElement('img');
 
-          msgBodyNode.setAttribute('src', message.attachments[0].previewUrl);
-          msgBodyNode.setAttribute('alt', 'attachment');
+          if (message.attachments[0].hasOwnProperty('previewUrl')) {
+            msgBodyNode.setAttribute('src', message.attachments[0].previewUrl);
+          }
+
+          msgBodyNode.setAttribute('alt', 'can\'t display attachment');
           msgBodyNode.classList.add('chat-message-attachment');
+
+          msgContainer.appendChild(msgBodyNode);
+        } else if (isEvent) {
+          const msgBodyNode = document.createElement('span');
+          msgBodyNode.classList.add('chat-message-body');
+
+          const msgBodyTextNode = document.createTextNode('(event)');
+          msgBodyNode.appendChild(msgBodyTextNode);
 
           msgContainer.appendChild(msgBodyNode);
         }
@@ -62,9 +90,8 @@ document.addEventListener('DOMContentLoaded', () => {
       if (lastMsg.body === '' && lastMsg.type === 'message') {
         const lastImgNode = this.chatBrowser.childNodes[this.chatBrowser.childNodes.length - 1];
         lastImgNode.childNodes[1].addEventListener('load', () => this.scrollToBottom());
-      } else {
-        this.scrollToBottom();
       }
+      setTimeout(() => this.scrollToBottom(), 1000);
     },
     cleanChatBrowser(): void {
       while (this.chatBrowser.firstChild) {
@@ -72,8 +99,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     },
     scrollToBottom(): void {
-      const chatDiv = document.getElementById('chat-browser');
-      chatDiv.scrollTop = chatDiv.scrollHeight;
+      this.chatBrowser.scrollTop = this.chatBrowser.scrollHeight;
     },
     setUpRequest(): void {
       this.request = new XMLHttpRequest;
@@ -82,18 +108,31 @@ document.addEventListener('DOMContentLoaded', () => {
         console.error('Server error dealing with the chat');
       };
     },
-    loadMessages(): void {
+    loadMessages(upTo: number, after: number, amount: number): void {
       this.setUpRequest();
 
-      const unixDate = +new Date();
-      const amount = this.settings.messagesCount;
+      if (amount === undefined) {
+        amount = this.settings.messagesPerLoad;
+      }
 
-      this.request.open('GET', `/api/get-messages?before=${unixDate}&amount=${amount}`);
+      let url = `/api/get-messages`;
+
+      if (after) {
+        url += `?after=${after}`;
+      } else if (upTo) {
+        url += `?up_to=${upTo}`;
+      } else {
+        url += `?up_to=${new Date().getTime()}`;
+      }
+
+      this.request.open('GET', url);
 
       this.request.onload = () => {
         if (this.request.status>= 200 && this.request.status < 400) {
           this.messages = JSON.parse(this.request.responseText);
           this.messages = this.messages.reverse();
+
+          console.log(this.messages);
 
           this.render();
         } else {
@@ -102,6 +141,18 @@ document.addEventListener('DOMContentLoaded', () => {
       };
 
       this.request.send();
+    },
+    loadFirstPage(): void {
+      this.loadMessages(undefined, undefined, undefined);
+    },
+    loadPrevPage(): void {
+      this.loadMessages(this.messages[0].timestamp, undefined, undefined);
+    },
+    loadNextPage(): void {
+      this.loadMessages(undefined, this.messages[this.messages.length - 1].timestamp, undefined);
+    },
+    loadLastPage(): void {
+      this.loadMessages(9999999999999, undefined, undefined);
     }
   };
 

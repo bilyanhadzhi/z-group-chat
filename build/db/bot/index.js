@@ -77,22 +77,36 @@ var bot = {
     },
     update: function () {
         var _this = this;
+        var self = this;
         Message
             .findOne()
             .sort({ timestamp: -1 })
             .exec(function (err, msg) {
-            console.log('last message in db: ', msg.body);
-            _this.api.getThreadHistory(_this.threadID, 200, undefined, function (err, messages) {
-                if (messages[messages.length - 1].timestamp !== msg.timestamp) {
-                    var newMsgs = [];
-                    messages = messages.reverse();
+            console.log('Updating db...');
+            console.log('Latest message: ', msg.body !== '' ? msg.body : '(it\'s an attachment)');
+            var lastMsgTimestamp = msg.timestamp;
+            var threadID = '814129402005312';
+            var timestamp = undefined;
+            var isInArray = function (arr, message) {
+                return arr.some(function (msgInArr) {
+                    return msgInArr.timestamp === message.timestamp
+                        && msgInArr.body === message.body
+                        && msgInArr.senderID === message.senderID;
+                });
+            };
+            var toInsert = [];
+            var interval = setInterval(function () { return loadMessages(_this.api); }, 5000);
+            function loadMessages(api) {
+                api.getThreadHistory(threadID, 501, timestamp, function (err, messages) {
+                    if (timestamp != undefined) {
+                        messages.pop();
+                    }
+                    timestamp = messages[0].timestamp;
+                    messages.reverse();
                     for (var _i = 0, messages_1 = messages; _i < messages_1.length; _i++) {
                         var message = messages_1[_i];
-                        if (message.timestamp <= msg.timestamp) {
-                            break;
-                        }
-                        else {
-                            newMsgs.push(new Message({
+                        if (message.timestamp > lastMsgTimestamp && !isInArray(toInsert, message)) {
+                            toInsert.unshift(new Message({
                                 senderThumbSrc: participantIDs[message.senderID],
                                 type: message.type,
                                 senderName: message.senderName,
@@ -103,16 +117,26 @@ var bot = {
                                 tags: message.tags
                             }));
                         }
+                        else {
+                            console.log("\nDone!");
+                            if (toInsert.length > 0) {
+                                console.log("Messages exported: " + toInsert.length + "\n");
+                            }
+                            else {
+                                console.log("No messages were exported");
+                            }
+                            clearInterval(interval);
+                            if (toInsert.length > 0) {
+                                Message.insertMany(toInsert);
+                            }
+                            self.listen();
+                            break;
+                        }
                     }
-                    newMsgs = newMsgs.reverse();
-                    Message.insertMany(newMsgs);
-                    _this.listen();
-                }
-                else {
-                    console.log('no new messages');
-                    _this.listen();
-                }
-            });
+                    console.log("[Loop] " + toInsert.length + " messages exported...");
+                });
+            }
+            loadMessages(_this.api);
         });
     }
 };

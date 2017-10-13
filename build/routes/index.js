@@ -49,22 +49,74 @@ module.exports = function (app, dirs) {
         }
     });
     app.get('/api/get-messages', function (req, res) {
-        if (parseInt(req.query.amount) != req.query.amount) {
+        if (req.query.amount && parseInt(req.query.amount) != req.query.amount) {
             res
                 .status(422)
                 .send({ 'error': 'amount must be a number' });
         }
+        var after = req.query.after ? parseInt(req.query.after) : null;
+        var upTo = req.query.up_to ? parseInt(req.query.up_to) : new Date().getTime();
+        var amount = null;
+        if (parseInt(req.query.amount) != req.query.amount) {
+            amount = 50;
+        }
+        else if (parseInt(req.query.amount) < 1) {
+            res.send([]);
+        }
+        else if (parseInt(req.query.amount) > 50) {
+            amount = 50;
+        }
         var params = {
-            before: req.query.before,
-            amount: parseInt(req.query.amount)
+            upTo: upTo,
+            after: after,
+            amount: amount
         };
-        Message
-            .find({ 'timestamp': { $lte: params.before } })
-            .sort({ 'timestamp': -1 })
-            .limit(params.amount)
+        console.log(params);
+        if (params.after) {
+            Message
+                .find({ 'timestamp': { '$gt': params.after } })
+                .sort({ 'timestamp': -1 })
+                .limit(params.amount)
+                .exec()["catch"](function (err) { return console.error(err); })
+                .then(function (messages) {
+                res.send(messages);
+            });
+        }
+        else {
+            Message
+                .find({ 'timestamp': { '$lte': params.upTo } })
+                .sort({ 'timestamp': -1 })
+                .limit(params.amount)
+                .exec()["catch"](function (err) { return console.error(err); })
+                .then(function (messages) {
+                res.send(messages);
+            });
+        }
+    });
+    app.get('/api/stats', function (req, res) {
+        var stats = {
+            leaderboard: {
+                labels: [],
+                values: []
+            }
+        };
+        Member
+            .find({})
             .exec()["catch"](function (err) { return console.error(err); })
-            .then(function (messages) {
-            res.send(messages);
+            .then(function (members) {
+            var promises = [];
+            members.forEach(function (member) {
+                promises.push(Message
+                    .find({ 'senderID': member.memberID })
+                    .count()
+                    .exec());
+            });
+            Promise.all(promises)
+                .then(function (values) {
+                members.forEach(function (member) { return stats.leaderboard.labels.push(member.firstName); });
+                values.forEach(function (value) { return stats.leaderboard.values.push(value); });
+                res.json(stats);
+            });
         });
     });
 };

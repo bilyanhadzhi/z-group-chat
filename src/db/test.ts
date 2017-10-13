@@ -39,26 +39,6 @@ login(loginInfo, (err: any, api: any) => {
   ];
 
   let toInsert: Array<any> = [];
-
-  api.getUserInfo(participantIDs, (err: any, obj: any) => {
-    Object.keys(obj).forEach((participantID: any) => {
-      const participant = obj[participantID];
-
-      toInsert.push(new Member({
-        memberID: participantID,
-        name: participant.name,
-        firstName: participant.firstName,
-        vanity: participant.vanity,
-        thumbSrc: participant.thumbSrc,
-        profileUrl: participant.profileUrl,
-        gender: participant.gender,
-        isBirthday: participant.isBirthday,
-      }));
-      console.log(participant);
-    });
-
-    Member.insertMany(toInsert);
-  });
 });
 
 // const state = api.getAppState();
@@ -70,6 +50,7 @@ login(loginInfo, (err: any, api: any) => {
 // ------- //
 
 // const file = `${__dirname}/messages.json`;
+// const jsonfile = require('jsonfile');
 
 // jsonfile.readFile(file, (err: any, data: any) => {
 //   const toInsert: Array<any> = [];

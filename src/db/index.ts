@@ -55,6 +55,72 @@ database.once('open', () => {
         .exec();
     });
   }, 60 * 1000);
+
+  // --- --- --- //
+  // --- --- --- //
+
+  // const login: any = require('facebook-chat-api');
+  // const loginInfo: any = {appState: JSON.parse(process.env.FB_STATE)};
+
+  // const lastMsgTimestamp: number = 1503845873204;
+  // const threadID: string = '814129402005312';
+  // let timestamp: any = undefined;
+
+  // const isInArray = (arr: any, message: any): boolean => {
+  //   return arr.some((msgInArr: any) => {
+  //     return msgInArr.timestamp === message.timestamp
+  //         && msgInArr.body === message.body
+  //         && msgInArr.senderID === message.senderID;
+  //   });
+  // }
+
+  // let toInsert: Array<any> = [];
+
+  // login(loginInfo, (err: any, api: any) => {
+  //   if (err) console.error(err);
+
+  //   const interval = setInterval(() => loadMessages(api), 5000);
+
+  //   function loadMessages(api: any): void {
+
+  //     api.getThreadHistoryGraphQL(threadID, 51, timestamp, (err: any, messages: any) => {
+  //       if (timestamp != undefined) {
+  //         messages.pop();
+  //       }
+  //       timestamp = messages[0].timestamp;
+
+  //       messages
+  //         .reverse()
+  //         .forEach((message: any) => {
+  //           if (message.timestamp > lastMsgTimestamp && !isInArray(toInsert, message)) {
+  //             toInsert.unshift(new Message({
+  //               senderThumbSrc: participantIDs[message.senderID],
+  //               type: message.type,
+  //               senderName: message.senderName,
+  //               senderID: message.senderID,
+  //               body: message.body,
+  //               attachments: message.attachments,
+  //               timestamp: message.timestamp,
+  //               tags: message.tags,
+  //             }));
+  //           } else {
+  //             console.log('\n\nDone!\n');
+  //             console.log('Last message:', message.body);
+
+  //             clearInterval(interval);
+
+  //             Message.insertMany(toInsert);
+  //           }
+  //         });
+
+  //       console.log(`${toInsert.length} messages exported...`);
+  //       // toInsert.forEach(msg => console.log(msg.body !== '' ? msg.body : '(pic)'))
+  //       // console.log('\n\n');
+  //     });
+  //   }
+
+  //   loadMessages(api);
+  // });
 });
 
 module.exports = database;

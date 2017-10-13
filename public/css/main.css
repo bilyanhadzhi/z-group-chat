@@ -85,10 +85,6 @@ hr {
   color: rgba(2, 119, 189, 1);
 }
 
-.chat-browser-container {
-
-}
-
 .chat-browser-container h3 {
   text-align: center;
 }
@@ -118,8 +114,8 @@ hr {
 .chat-message-container > .profile-image {
   border-radius: 50%;
   margin-left: 9px;
-  width: 24px;
-  height: 24px;
+  min-width: 32px;
+  min-height: 32px;
 }
 
 .chat-message-container > .chat-message-body {

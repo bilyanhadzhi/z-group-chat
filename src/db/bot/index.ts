@@ -84,24 +84,43 @@ const bot: any = {
     }, 60000);
   },
   update(): void {
+    const self = this;
+
     Message
       .findOne()
       .sort({timestamp: -1})
       .exec((err: any, msg: any) => {
 
-        console.log('last message in db: ', msg.body);
+        console.log('Updating db...');
+        console.log('Latest message: ', msg.body !== '' ? msg.body : '(it\'s an attachment)');
 
-        this.api.getThreadHistory(this.threadID, 200, undefined, (err: any, messages: any) => {
-          if (messages[messages.length - 1].timestamp !== msg.timestamp) {
-            let newMsgs: any = [];
+        const lastMsgTimestamp: number = msg.timestamp;
+        const threadID: string = '814129402005312';
+        let timestamp: any = undefined;
 
-            messages = messages.reverse();
+        const isInArray = (arr: any, message: any): boolean => {
+          return arr.some((msgInArr: any) => {
+            return msgInArr.timestamp === message.timestamp
+                && msgInArr.body === message.body
+                && msgInArr.senderID === message.senderID;
+          });
+        }
+
+        let toInsert: Array<any> = [];
+        const interval = setInterval(() => loadMessages(this.api), 5000);
+
+        function loadMessages(api: any): void {
+          api.getThreadHistory(threadID, 501, timestamp, (err: any, messages: any) => {
+            if (timestamp != undefined) {
+              messages.pop();
+            }
+            timestamp = messages[0].timestamp;
+
+            messages.reverse();
 
             for (let message of messages) {
-              if (message.timestamp <= msg.timestamp) {
-                break;
-              } else {
-                newMsgs.push(new Message({
+              if (message.timestamp > lastMsgTimestamp && !isInArray(toInsert, message)) {
+                toInsert.unshift(new Message({
                   senderThumbSrc: participantIDs[message.senderID],
                   type: message.type,
                   senderName: message.senderName,
@@ -111,18 +130,31 @@ const bot: any = {
                   timestamp: message.timestamp,
                   tags: message.tags,
                 }));
+              } else {
+                console.log(`\nDone!`);
+
+                if (toInsert.length > 0) {
+                  console.log(`Messages exported: ${toInsert.length}\n`);
+                } else {
+                  console.log(`No messages were exported`);
+                }
+
+                clearInterval(interval);
+
+                if (toInsert.length > 0) {
+                  Message.insertMany(toInsert);
+                }
+
+                self.listen();
+                break;
               }
             }
 
-            newMsgs = newMsgs.reverse();
-            Message.insertMany(newMsgs);
+            console.log(`[Loop] ${toInsert.length} messages exported...`);
+          });
+        }
 
-            this.listen();
-          } else {
-            console.log('no new messages');
-            this.listen();
-          }
-        });
+        loadMessages(this.api);
     });
   },
 };
