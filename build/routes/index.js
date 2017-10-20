@@ -26,6 +26,32 @@ module.exports = function (app, dirs) {
         };
         res.render('browse-chat', data);
     });
+    app.get('/members', function (req, res) {
+        var data = {
+            title: 'Members',
+            loggedIn: req.session.loggedIn
+        };
+        Member
+            .find({})
+            .exec()["catch"](function (err) { return console.error(err); })
+            .then(function (members) {
+            var promises = [];
+            members.forEach(function (member) {
+                promises.push(Message
+                    .find({ 'senderID': member.memberID })
+                    .count()
+                    .exec());
+            });
+            Promise.all(promises)
+                .then(function (values) {
+                for (var i = 0; i < values.length; ++i) {
+                    members[i].numOfMessages = values[i];
+                }
+                data.members = members;
+                res.render('members', data);
+            });
+        });
+    });
     app.get('/auth', function (req, res) {
         res.render('auth', { title: 'Log in' });
     });

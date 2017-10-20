@@ -43,6 +43,67 @@ hr {
   border-radius: 3px;
 }
 
+.inner-container > header {
+  display: flex;
+  justify-content: center;
+  padding: 0 0 30px 0;
+}
+
+/* Member page styles */
+.members-list > .member-container {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  padding: 10px 0;
+}
+
+.member-container > img {
+  border-radius: 50%;
+  min-height: 16px;
+  margin-right: 8px;
+}
+
+.member-container > .member-name-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.member-container * {
+  font-size: 0.75rem;
+}
+
+.member-name-container > .member-name {
+  font-size: 1rem;
+  margin-left: -1px;
+}
+
+.member-name-container > .member-vanity {
+  font-size: 0.6rem;
+}
+
+.member-name-container > .member-message-count {
+  padding-top: 3px;
+  font-size: 0.5rem;
+}
+
+.member-container > .member-buttons {
+  margin-left: auto;
+}
+
+.member-buttons > button {
+  font-size: 1rem;
+  background: rgba(0, 0, 0, 0.75);
+  font: inherit;
+  border-radius: 5px;
+  height: 20px;
+}
+
+.member-buttons > button > a {
+  padding: 5px;
+  height: 100%;
+  color: rgba(255, 255, 255, 0.9);
+}
+
 #navbar {
   display: flex;
   align-items: center;
@@ -167,6 +228,20 @@ hr {
 }
 
 /* Media queries */
+@media screen and (min-width: 450px) {
+  .member-name-container > .member-name {
+    font-size: 1.5rem;
+  }
+
+  .member-name-container > .member-vanity {
+    font-size: 0.75rem;
+  }
+
+  .member-name-container > .member-message-count {
+    font-size: 0.7rem;
+  }
+}
+
 @media screen and (min-width: 600px) {
   #navbar a {
     padding: 0 25px;

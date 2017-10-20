@@ -16,6 +16,9 @@ document.addEventListener('DOMContentLoaded', () => {
           },
           options: {
             scales: {
+              xAxes: [{
+                barPercentage: 0.5,
+              }],
               yAxes: [{
                 ticks: {
                   beginAtZero: true,

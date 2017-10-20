@@ -25,7 +25,6 @@ login(loginInfo, (err: any, api: any) => {
     100003538747263,
     100003893351763,
     100004103933218,
-    100004528962777,
     100005719830564,
     100006969340636,
     100007027441774,
@@ -37,6 +36,12 @@ login(loginInfo, (err: any, api: any) => {
     100018364275725,
     100000872904607,
   ];
+
+  participantIDs.forEach((participantID: any) => {
+    api.getUserInfo(participantID, (err: any, info: any) => {
+      setTimeout(() => console.log(participantID, info[participantID].thumbSrc), 10000);
+    });
+  });
 
   let toInsert: Array<any> = [];
 });

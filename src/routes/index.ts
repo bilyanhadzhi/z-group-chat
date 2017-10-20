@@ -30,8 +30,43 @@ module.exports = (app: any, dirs: any) => {
       title: 'Browse the chat',
       loggedIn: req.session.loggedIn,
     };
-      res.render('browse-chat', data);
-    });
+
+    res.render('browse-chat', data);
+  });
+
+  app.get('/members', (req: any, res: any) => {
+    const data: any = {
+      title: 'Members',
+      loggedIn: req.session.loggedIn,
+    };
+
+    Member
+      .find({})
+      .exec()
+      .catch((err: any) => console.error(err))
+      .then((members: any) => {
+        const promises: Array<any> = [];
+
+        members.forEach((member: any) => {
+          promises.push(
+            Message
+              .find({'senderID': member.memberID})
+              .count()
+              .exec()
+            );
+        });
+
+        Promise.all(promises)
+          .then((values: any) => {
+            for (let i = 0; i < values.length; ++i) {
+              members[i].numOfMessages = values[i];
+            }
+
+            data.members = members;
+            res.render('members', data);
+          });
+      });
+  });
 
   app.get('/auth', (req: any, res: any) => {
     res.render('auth', {title: 'Log in'});
@@ -130,16 +165,13 @@ module.exports = (app: any, dirs: any) => {
             Message
               .find({'senderID': member.memberID})
               .count()
-              .exec());
-            // .catch((e: any) => console.error(e))
-            // .then((count: any) => {
-              // stats.leaderboard.labels.push(member.firstName);
-            //   stats.leaderboard.values.push(count);
-            // }));
+              .exec()
+            );
         });
 
         Promise.all(promises)
           .then((values: any) => {
+            // console.log(values);
             members.forEach((member: any) => stats.leaderboard.labels.push(member.firstName));
             values.forEach((value: any) => stats.leaderboard.values.push(value));
 
