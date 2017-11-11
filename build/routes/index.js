@@ -52,6 +52,13 @@ module.exports = function (app, dirs) {
             });
         });
     });
+    app.get('/members/:id', function (req, res) {
+        var data = {
+            title: '',
+            loggedIn: req.session.loggedIn
+        };
+        res.render('member', data);
+    });
     app.get('/auth', function (req, res) {
         res.render('auth', { title: 'Log in' });
     });
@@ -124,13 +131,22 @@ module.exports = function (app, dirs) {
             leaderboard: {
                 labels: [],
                 values: []
+            },
+            wordFrequency: {
+                labels: [],
+                values: []
             }
         };
+        var promises = [];
+        promises.push(Message
+            .find({ 'body': { '$ne': '' } })
+            .select('body')
+            .sort({ 'timestamp': -1 })
+            .exec());
         Member
             .find({})
             .exec()["catch"](function (err) { return console.error(err); })
             .then(function (members) {
-            var promises = [];
             members.forEach(function (member) {
                 promises.push(Message
                     .find({ 'senderID': member.memberID })
@@ -139,6 +155,28 @@ module.exports = function (app, dirs) {
             });
             Promise.all(promises)
                 .then(function (values) {
+                var messages = values.shift();
+                var wordFrq = {};
+                messages.forEach(function (message) {
+                    if (message.body) {
+                        var words = message.body.toLowerCase().match(/(\w+|[а-яА-Я]+)/g);
+                        if (words) {
+                            words.forEach(function (word) {
+                                if (wordFrq[word]) {
+                                    ++wordFrq[word];
+                                }
+                                else {
+                                    wordFrq[word] = 1;
+                                }
+                            });
+                        }
+                    }
+                });
+                Object.keys(wordFrq)
+                    .forEach(function (key) {
+                    stats.wordFrequency.labels.push(key);
+                    stats.wordFrequency.values.push(wordFrq[key]);
+                });
                 members.forEach(function (member) { return stats.leaderboard.labels.push(member.firstName); });
                 values.forEach(function (value) { return stats.leaderboard.values.push(value); });
                 res.json(stats);

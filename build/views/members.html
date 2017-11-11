@@ -21,32 +21,15 @@
           <span class="member-message-count">{{this.numOfMessages}} messages</span>
         </div>
         <div class="member-buttons">
-          <button href="#">
-            <a href="#">Stats</a>
+          <button>
+            <a href="/members/{{this.memberID}}">Stats</a>
           </button>
-          <button href="#">
-            <a href="{{this.profileUrl}}">Profile</a>
+          <button>
+            <a target="_blank" rel="noopener" href="https://www.facebook.com/profile.php?id={{this.memberID}}">Profile</a>
           </button>
         </div>
       </div>
       {{/each}}
-
-      <!-- <div class="member-container">
-        <img src="https://scontent-frt3-2.xx.fbcdn.net/v/t1.0-1/p32x32/14519717_1123910227645358_7936452822207951761_n.jpg?oh=acc0a68edcbef0ffe335f7c41c910471&oe=5A16E9D4" alt="img">
-        <div class="member-name-container">
-          <a class="member-name">Polly Stefanova</a>
-          <span class="member-vanity">@pollysssssss</span>
-          <span class="member-message-count">4921 messages</span>
-        </div>
-        <div class="member-buttons">
-          <button href="#">
-            <a href="#">Stats</a>
-          </button>
-          <button href="#">
-            <a href="#">Profile</a>
-          </button>
-        </div>
-      </div> -->
     </div>
   </section>
 </div>

@@ -41,10 +41,10 @@ module.exports = (app: any, dirs: any) => {
     };
 
     Member
-      .find({})
-      .exec()
-      .catch((err: any) => console.error(err))
-      .then((members: any) => {
+    .find({})
+    .exec()
+    .catch((err: any) => console.error(err))
+    .then((members: any) => {
         const promises: Array<any> = [];
 
         members.forEach((member: any) => {
@@ -66,6 +66,15 @@ module.exports = (app: any, dirs: any) => {
             res.render('members', data);
           });
       });
+  });
+
+  app.get('/members/:id', (req: any, res: any) => {
+    const data: any = {
+      title: '',
+      loggedIn: req.session.loggedIn,
+    };
+
+    res.render('member', data);
   });
 
   app.get('/auth', (req: any, res: any) => {
@@ -151,14 +160,28 @@ module.exports = (app: any, dirs: any) => {
         labels: [],
         values: [],
       },
+      wordFrequency: {
+        labels: [],
+        values: [],
+      },
     };
+
+    const promises: Array<Promise<any>> = [];
+
+    promises.push(
+      Message
+        .find({'body': {'$ne': ''}})
+        .select('body')
+        .sort({'timestamp': -1})
+        // .limit(100)
+        .exec()
+    );
 
     Member
       .find({})
       .exec()
       .catch((err: any) => console.error(err))
       .then((members: any) => {
-        const promises: Promise<any>[] = [];
 
         members.forEach((member: any) => {
           promises.push(
@@ -169,9 +192,35 @@ module.exports = (app: any, dirs: any) => {
             );
         });
 
+
         Promise.all(promises)
           .then((values: any) => {
-            // console.log(values);
+            const messages = values.shift();
+
+            const wordFrq: any = {};
+
+            messages.forEach((message: any) => {
+              if (message.body) {
+                const words = message.body.toLowerCase().match(/(\w+|[а-яА-Я]+)/g);
+
+                if (words) {
+                  words.forEach((word: any) => {
+                    if (wordFrq[word]) {
+                      ++wordFrq[word];
+                    } else {
+                      wordFrq[word] = 1;
+                    }
+                  });
+                }
+              }
+            });
+
+            Object.keys(wordFrq)
+              .forEach((key: any) => {
+                stats.wordFrequency.labels.push(key);
+                stats.wordFrequency.values.push(wordFrq[key]);
+              });
+
             members.forEach((member: any) => stats.leaderboard.labels.push(member.firstName));
             values.forEach((value: any) => stats.leaderboard.values.push(value));
 

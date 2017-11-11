@@ -227,6 +227,10 @@ hr {
   color: rgba(255, 255, 255, 1);
 }
 
+.chart-container {
+  padding-bottom: 20px;
+}
+
 /* Media queries */
 @media screen and (min-width: 450px) {
   .member-name-container > .member-name {
