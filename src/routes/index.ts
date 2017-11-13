@@ -156,13 +156,28 @@ module.exports = (app: any, dirs: any) => {
 
   app.get('/api/stats', (req: any, res: any) => {
     let stats: any = {
-      leaderboard: {
+      msgLeaderboard: {
+        labels: [],
+        values: [],
+      },
+      wordLeaderboard: {
         labels: [],
         values: [],
       },
       wordFrequency: {
         labels: [],
         values: [],
+      },
+      timeOfDayFrequency: {
+        labels: [
+          '00', '01', '02', '03', '04', '05',
+          '06', '07', '08', '09', '10', '11',
+          '12', '13', '14', '15', '16', '17',
+          '18', '19', '20', '21', '22', '23',
+        ],
+        values: [
+          0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        ],
       },
     };
 
@@ -171,9 +186,9 @@ module.exports = (app: any, dirs: any) => {
     promises.push(
       Message
         .find({'body': {'$ne': ''}})
-        .select('body')
+        .select('body timestamp senderID')
         .sort({'timestamp': -1})
-        // .limit(100)
+        // .limit(1000)
         .exec()
     );
 
@@ -183,7 +198,14 @@ module.exports = (app: any, dirs: any) => {
       .catch((err: any) => console.error(err))
       .then((members: any) => {
 
+        const membersWordFrq: any = {};
+
         members.forEach((member: any) => {
+          membersWordFrq[member.memberID] = {};
+          membersWordFrq[member.memberID].name = member.firstName;
+          membersWordFrq[member.memberID].id = member.memberID;
+          membersWordFrq[member.memberID].numOfWords = 0;
+
           promises.push(
             Message
               .find({'senderID': member.memberID})
@@ -200,6 +222,8 @@ module.exports = (app: any, dirs: any) => {
             const wordFrq: any = {};
 
             messages.forEach((message: any) => {
+              ++stats.timeOfDayFrequency.values[new Date(message.timestamp).getHours()];
+
               if (message.body) {
                 const words = message.body.toLowerCase().match(/(\w+|[а-яА-Я]+)/g);
 
@@ -209,6 +233,10 @@ module.exports = (app: any, dirs: any) => {
                       ++wordFrq[word];
                     } else {
                       wordFrq[word] = 1;
+                    }
+
+                    if (membersWordFrq[message.senderID]) {
+                      ++membersWordFrq[message.senderID].numOfWords;
                     }
                   });
                 }
@@ -221,8 +249,14 @@ module.exports = (app: any, dirs: any) => {
                 stats.wordFrequency.values.push(wordFrq[key]);
               });
 
-            members.forEach((member: any) => stats.leaderboard.labels.push(member.firstName));
-            values.forEach((value: any) => stats.leaderboard.values.push(value));
+            Object.keys(membersWordFrq)
+              .forEach((key: any) => {
+                stats.wordLeaderboard.labels.push(membersWordFrq[key].name);
+                stats.wordLeaderboard.values.push(membersWordFrq[key].numOfWords);
+              });
+
+            members.forEach((member: any) => stats.msgLeaderboard.labels.push(member.firstName));
+            values.forEach((value: any) => stats.msgLeaderboard.values.push(value));
 
             res.json(stats);
           });

@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
   const charts: any = {
-    leaderboard: {
+    msgLeaderboard: {
       initChart(data: any) {
         const context = document.getElementById('leaderboard-chart');
 
@@ -9,15 +9,20 @@ document.addEventListener('DOMContentLoaded', () => {
           data: {
             labels: [],
             datasets: [{
-              label: '# of messages',
+              label: 'Number of messages',
               data: [],
-              backgroundColor: 'rgba(2, 119, 189, 0.5)',
+              backgroundColor: 'rgba(25,118,210 ,0.5)',
             }],
           },
           options: {
+            title: {
+              text: 'Number of messages by person',
+              display: true,
+              fontSize: 14,
+            },
             scales: {
               xAxes: [{
-                barPercentage: 0.5,
+                // barPercentage: 0.5,
               }],
               yAxes: [{
                 ticks: {
@@ -33,13 +38,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const self = this;
         const list: any = [];
 
-        for (let i = 0; i < data.leaderboard.labels.length; ++i) {
+        for (let i = 0; i < data.msgLeaderboard.labels.length; ++i) {
           list[i] = {};
-          list[i].name = data.leaderboard.labels[i];
-        }
-
-        for (let i = 0; i < data.leaderboard.values.length; ++i) {
-          list[i].numOfMessages = data.leaderboard.values[i];
+          list[i].name = data.msgLeaderboard.labels[i];
+          list[i].numOfMessages = data.msgLeaderboard.values[i];
         }
 
         list.sort((a: any, b: any) => {
@@ -54,6 +56,76 @@ document.addEventListener('DOMContentLoaded', () => {
         this.chart.update();
       },
     },
+    wordLeaderboard: {
+      initChart(data: any): void {
+        const context = document.getElementById('word-leaderboard-chart');
+        const self = this;
+
+        this.chart = new Chart(context, {
+          type: 'horizontalBar',
+          data: {
+            labels: [],
+            datasets: [{
+              label: 'Number of words',
+              data: [],
+              backgroundColor: 'rgba(25,118,210 ,0.5)',
+            }],
+          },
+          options: {
+            title: {
+              text: 'Number of words by person',
+              display: true,
+              fontSize: 14,
+            },
+            scales: {
+              xAxes: [{
+                // barPercentage: 0.5,
+              }],
+              yAxes: [{
+                ticks: {
+                  beginAtZero: true,
+                }
+              }],
+            },
+            responsive: true,
+            maintainAspectRatio: false,
+          },
+        });
+
+        const wordLeaderboard = [];
+
+        for (let i = 0; i < data.wordLeaderboard.labels.length; ++i) {
+          wordLeaderboard.push({
+            name: data.wordLeaderboard.labels[i],
+            numOfWords: data.wordLeaderboard.values[i],
+          });
+        }
+
+        wordLeaderboard.sort((a: any, b: any) => {
+          return (a.numOfWords < b.numOfWords ? 1 : (a.numOfWords === b.numOfWords ? 0 : -1));
+        });
+
+        wordLeaderboard.forEach((member: any) => {
+          self.chart.data.datasets[0].data.push(member.numOfWords);
+          self.chart.data.labels.push(member.name);
+        });
+
+        charts.wordsPerMessage.initChart();
+        this.chart.update();
+      },
+    },
+    wordsPerMessage: {
+      initChart(): void {
+        for (let i = 0; i < charts.msgLeaderboard.chart.data.labels.length; ++i) {
+          const currLabel = charts.msgLeaderboard.chart.data.labels[i];
+          const indexOfCurrLabel = charts.wordsLeaderboard.data.labels.indexOf(currLabel);
+
+          const wordsPerMessage = charts.wordsLeaderboard.data.datasets[0].data[indexOfCurrLabel] / charts.msgLeaderboard.chart.data.datasets[0].data[i];
+
+          console.log(currLabel, wordsPerMessage);
+        }
+      },
+    },
     subjects: {
       initChart(data, wordFrqList): void {
         const context = document.getElementById('subjects-chart');
@@ -64,15 +136,20 @@ document.addEventListener('DOMContentLoaded', () => {
           data: {
             labels: [],
             datasets: [{
-              label: '# of occurrences',
+              label: 'Number of occurrences',
               data: [],
-              backgroundColor: 'rgba(2, 119, 189, 0.5)',
+              backgroundColor: 'rgba(230,74,25 ,0.5)',
             }],
           },
           options: {
+            title: {
+              text: 'Number of occurrences of a subject',
+              display: true,
+              fontSize: 14,
+            },
             scales: {
               xAxes: [{
-                barPercentage: 0.5,
+                // barPercentage: 0.5,
               }],
               yAxes: [{
                 ticks: {
@@ -182,7 +259,7 @@ document.addEventListener('DOMContentLoaded', () => {
           return (a.count < b.count ? 1 : (a.count === b.count ? 0 : -1));
         });
 
-        console.log(subjectsDisplayData);
+        // console.log(subjectsDisplayData);
 
         subjectsDisplayData.forEach((subject: any) => {
           self.chart.data.datasets[0].data.push(subject.count);
@@ -192,7 +269,52 @@ document.addEventListener('DOMContentLoaded', () => {
         this.chart.update();
       },
     },
+    timeOfDayFrequency: {
+      initChart(data): void {
+        const context = document.getElementById('time-of-day-frequency-chart');
+
+        this.chart = new Chart(context, {
+          type: 'bar',
+          data: {
+            labels: [],
+            datasets: [{
+              label: 'Number of messages',
+              data: [],
+              backgroundColor: 'rgba(211,47,47 ,0.5)',
+            }],
+          },
+          options: {
+            title: {
+              text: 'Number of messages by time of day',
+              display: true,
+              fontSize: 14,
+            },
+            scales: {
+              xAxes: [{
+                // barPercentage: 0.5,
+              }],
+              yAxes: [{
+                ticks: {
+                  beginAtZero: true,
+                }
+              }],
+            },
+            responsive: true,
+            maintainAspectRatio: false,
+          },
+        });
+
+        this.chart.data.datasets[0].data = data.timeOfDayFrequency.values;
+        this.chart.data.labels = data.timeOfDayFrequency.labels;
+
+        this.chart.update();
+
+        console.log(data);
+      },
+    },
     init(): void {
+      Chart.defaults.global.defaultFontFamily = '"Ubuntu", sans-serif';
+
       fetch(`/api/stats`, { credentials: 'include' })
         .catch((err: any) => console.error(err))
         .then((response: any) => response.json())
@@ -213,8 +335,10 @@ document.addEventListener('DOMContentLoaded', () => {
             return (a.count < b.count ? 1 : (a.count === b.count ? 0 : -1));
           });
 
-          this.leaderboard.initChart(data);
+          this.msgLeaderboard.initChart(data);
+          this.wordLeaderboard.initChart(data);
           this.subjects.initChart(data, wordFrqList);
+          this.timeOfDayFrequency.initChart(data);
         });
     },
   };

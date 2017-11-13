@@ -128,26 +128,46 @@ module.exports = function (app, dirs) {
     });
     app.get('/api/stats', function (req, res) {
         var stats = {
-            leaderboard: {
+            msgLeaderboard: {
+                labels: [],
+                values: []
+            },
+            wordLeaderboard: {
                 labels: [],
                 values: []
             },
             wordFrequency: {
                 labels: [],
                 values: []
+            },
+            timeOfDayFrequency: {
+                labels: [
+                    '00', '01', '02', '03', '04', '05',
+                    '06', '07', '08', '09', '10', '11',
+                    '12', '13', '14', '15', '16', '17',
+                    '18', '19', '20', '21', '22', '23',
+                ],
+                values: [
+                    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                ]
             }
         };
         var promises = [];
         promises.push(Message
             .find({ 'body': { '$ne': '' } })
-            .select('body')
+            .select('body timestamp senderID')
             .sort({ 'timestamp': -1 })
             .exec());
         Member
             .find({})
             .exec()["catch"](function (err) { return console.error(err); })
             .then(function (members) {
+            var membersWordFrq = {};
             members.forEach(function (member) {
+                membersWordFrq[member.memberID] = {};
+                membersWordFrq[member.memberID].name = member.firstName;
+                membersWordFrq[member.memberID].id = member.memberID;
+                membersWordFrq[member.memberID].numOfWords = 0;
                 promises.push(Message
                     .find({ 'senderID': member.memberID })
                     .count()
@@ -158,6 +178,7 @@ module.exports = function (app, dirs) {
                 var messages = values.shift();
                 var wordFrq = {};
                 messages.forEach(function (message) {
+                    ++stats.timeOfDayFrequency.values[new Date(message.timestamp).getHours()];
                     if (message.body) {
                         var words = message.body.toLowerCase().match(/(\w+|[а-яА-Я]+)/g);
                         if (words) {
@@ -168,6 +189,9 @@ module.exports = function (app, dirs) {
                                 else {
                                     wordFrq[word] = 1;
                                 }
+                                if (membersWordFrq[message.senderID]) {
+                                    ++membersWordFrq[message.senderID].numOfWords;
+                                }
                             });
                         }
                     }
@@ -177,8 +201,13 @@ module.exports = function (app, dirs) {
                     stats.wordFrequency.labels.push(key);
                     stats.wordFrequency.values.push(wordFrq[key]);
                 });
-                members.forEach(function (member) { return stats.leaderboard.labels.push(member.firstName); });
-                values.forEach(function (value) { return stats.leaderboard.values.push(value); });
+                Object.keys(membersWordFrq)
+                    .forEach(function (key) {
+                    stats.wordLeaderboard.labels.push(membersWordFrq[key].name);
+                    stats.wordLeaderboard.values.push(membersWordFrq[key].numOfWords);
+                });
+                members.forEach(function (member) { return stats.msgLeaderboard.labels.push(member.firstName); });
+                values.forEach(function (value) { return stats.msgLeaderboard.values.push(value); });
                 res.json(stats);
             });
         });
