@@ -110,20 +110,7 @@ document.addEventListener('DOMContentLoaded', () => {
           self.chart.data.labels.push(member.name);
         });
 
-        charts.wordsPerMessage.initChart();
         this.chart.update();
-      },
-    },
-    wordsPerMessage: {
-      initChart(): void {
-        for (let i = 0; i < charts.msgLeaderboard.chart.data.labels.length; ++i) {
-          const currLabel = charts.msgLeaderboard.chart.data.labels[i];
-          const indexOfCurrLabel = charts.wordsLeaderboard.data.labels.indexOf(currLabel);
-
-          const wordsPerMessage = charts.wordsLeaderboard.data.datasets[0].data[indexOfCurrLabel] / charts.msgLeaderboard.chart.data.datasets[0].data[i];
-
-          console.log(currLabel, wordsPerMessage);
-        }
       },
     },
     subjects: {
@@ -259,8 +246,6 @@ document.addEventListener('DOMContentLoaded', () => {
           return (a.count < b.count ? 1 : (a.count === b.count ? 0 : -1));
         });
 
-        // console.log(subjectsDisplayData);
-
         subjectsDisplayData.forEach((subject: any) => {
           self.chart.data.datasets[0].data.push(subject.count);
           self.chart.data.labels.push(subject.name);
@@ -288,6 +273,16 @@ document.addEventListener('DOMContentLoaded', () => {
               text: 'Number of messages by time of day',
               display: true,
               fontSize: 14,
+            },
+            tooltips: {
+              callbacks: {
+                title(tooltipItem, data): any {
+                  let nextHour: any = (parseInt(tooltipItem[0].xLabel) + 1) % 24;
+                  nextHour = nextHour < 10 ? `0${nextHour}` : nextHour.toString();
+
+                  return `${tooltipItem[0].xLabel}:00 – ${nextHour}:00`;
+                },
+              },
             },
             scales: {
               xAxes: [{

@@ -61,6 +61,8 @@ hr {
   border-radius: 50%;
   min-height: 16px;
   margin-right: 8px;
+  max-height: 32px;
+  max-width: 32px;
 }
 
 .member-container > .member-name-container {
@@ -172,7 +174,7 @@ hr {
   padding-right: 45px;
 }
 
-.chat-message-container > .profile-image {
+.chat-image {
   border-radius: 50%;
   margin-left: 9px;
   min-width: 32px;
@@ -231,6 +233,24 @@ hr {
   padding-bottom: 48px;
 }
 
+/* Profile styles */
+.profile-name {
+  text-align: center;
+}
+
+.profile-image-container {
+  display: flex;
+  justify-content: center;
+  margin: 10px 0;
+}
+
+.profile-image-container > img {
+  border-radius: 50%;
+  max-width: 128px;
+  max-height: 128px;
+
+}
+
 /* Media queries */
 @media screen and (min-width: 450px) {
   .member-name-container > .member-name {
@@ -261,6 +281,11 @@ hr {
 
   .chat-message-container > .chat-message-body {
     font-size: 1rem;
+  }
+
+  .member-container > img {
+    max-height: 64px;
+    max-width: 64px;
   }
 }
 

@@ -38,7 +38,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const authorImgNode = document.createElement('img');
         authorImgNode.setAttribute('src', message.senderThumbSrc);
         authorImgNode.setAttribute('alt', 'img');
-        authorImgNode.classList.add('profile-image');
+        authorImgNode.classList.add('chat-image');
         msgContainer.appendChild(authorImgNode);
 
         const isTextMessage = message.type === 'message';

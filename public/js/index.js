@@ -94,18 +94,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     self.chart.data.datasets[0].data.push(member.numOfWords);
                     self.chart.data.labels.push(member.name);
                 });
-                charts.wordsPerMessage.initChart();
                 this.chart.update();
-            }
-        },
-        wordsPerMessage: {
-            initChart: function () {
-                for (var i = 0; i < charts.msgLeaderboard.chart.data.labels.length; ++i) {
-                    var currLabel = charts.msgLeaderboard.chart.data.labels[i];
-                    var indexOfCurrLabel = charts.wordsLeaderboard.data.labels.indexOf(currLabel);
-                    var wordsPerMessage = charts.wordsLeaderboard.data.datasets[0].data[indexOfCurrLabel] / charts.msgLeaderboard.chart.data.datasets[0].data[i];
-                    console.log(currLabel, wordsPerMessage);
-                }
             }
         },
         subjects: {
@@ -232,7 +221,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 subjectsDisplayData.sort(function (a, b) {
                     return (a.count < b.count ? 1 : (a.count === b.count ? 0 : -1));
                 });
-                // console.log(subjectsDisplayData);
                 subjectsDisplayData.forEach(function (subject) {
                     self.chart.data.datasets[0].data.push(subject.count);
                     self.chart.data.labels.push(subject.name);
@@ -258,6 +246,15 @@ document.addEventListener('DOMContentLoaded', function () {
                             text: 'Number of messages by time of day',
                             display: true,
                             fontSize: 14
+                        },
+                        tooltips: {
+                            callbacks: {
+                                title: function (tooltipItem, data) {
+                                    var nextHour = (parseInt(tooltipItem[0].xLabel) + 1) % 24;
+                                    nextHour = nextHour < 10 ? "0" + nextHour : nextHour.toString();
+                                    return tooltipItem[0].xLabel + ":00 \u2013 " + nextHour + ":00";
+                                }
+                            }
                         },
                         scales: {
                             xAxes: [{}],

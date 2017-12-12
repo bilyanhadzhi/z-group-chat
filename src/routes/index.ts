@@ -69,12 +69,21 @@ module.exports = (app: any, dirs: any) => {
   });
 
   app.get('/members/:id', (req: any, res: any) => {
-    const data: any = {
-      title: '',
-      loggedIn: req.session.loggedIn,
-    };
+    Member
+      .findOne({memberID: req.params.id})
+      .lean()
+      .exec()
+      .catch((err: any) => console.error(err))
+      .then((member: any) => {
+        console.log(member);
+        const data: any = {
+          title: '',
+          loggedIn: req.session.loggedIn,
+          member: member,
+        };
 
-    res.render('member', data);
+        res.render('member', data);
+      });
   });
 
   app.get('/auth', (req: any, res: any) => {
@@ -188,7 +197,7 @@ module.exports = (app: any, dirs: any) => {
         .find({'body': {'$ne': ''}})
         .select('body timestamp senderID')
         .sort({'timestamp': -1})
-        // .limit(1000)
+        // .limit(500)
         .exec()
     );
 

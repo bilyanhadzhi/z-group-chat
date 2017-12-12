@@ -10,9 +10,9 @@
     <div class="members-list">
       {{#each members}}
       <div class="member-container">
-        <img src="{{this.thumbSrc}}" alt="img">
+        <img src="https://graph.facebook.com/{{this.memberID}}/picture?height=64&width=64" alt="img">
         <div class="member-name-container">
-          <a class="member-name">{{this.name}}</a>
+          <a href="/members/{{this.memberID}}" class="member-name">{{this.name}}</a>
           {{#if this.vanity}}
             <span class="member-vanity">@{{this.vanity}}</span>
           {{else}}

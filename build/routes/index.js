@@ -53,11 +53,19 @@ module.exports = function (app, dirs) {
         });
     });
     app.get('/members/:id', function (req, res) {
-        var data = {
-            title: '',
-            loggedIn: req.session.loggedIn
-        };
-        res.render('member', data);
+        Member
+            .findOne({ memberID: req.params.id })
+            .lean()
+            .exec()["catch"](function (err) { return console.error(err); })
+            .then(function (member) {
+            console.log(member);
+            var data = {
+                title: '',
+                loggedIn: req.session.loggedIn,
+                member: member
+            };
+            res.render('member', data);
+        });
     });
     app.get('/auth', function (req, res) {
         res.render('auth', { title: 'Log in' });
