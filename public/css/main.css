@@ -27,6 +27,7 @@ hr {
   border: 0;
   margin: 18px 0;
   padding: 0;
+  background-color: rgba(0, 0, 0, 0.1);
 }
 
 .outer-container {
@@ -63,6 +64,7 @@ hr {
   margin-right: 8px;
   max-height: 32px;
   max-width: 32px;
+  box-shadow: 0px 0px 2px rgba(0, 0, 0, 0.25);
 }
 
 .member-container > .member-name-container {
@@ -77,6 +79,7 @@ hr {
 .member-name-container > .member-name {
   font-size: 1rem;
   margin-left: -1px;
+  color: rgba(0, 0, 0, 0.8);
 }
 
 .member-name-container > .member-vanity {
@@ -155,7 +158,6 @@ hr {
 .chat-browser-container hr {
   width: calc(100% + 36px);
   margin-left: -18px;
-  border-top: 1px solid rgba(0, 0, 0, 0.1);
 }
 
 #chat-browser {
@@ -236,19 +238,46 @@ hr {
 /* Profile styles */
 .profile-name {
   text-align: center;
+  font-size: 1.7rem;
 }
 
-.profile-image-container {
+.profile-header {
   display: flex;
   justify-content: center;
-  margin: 10px 0;
+  flex-direction: column;
+  align-items: center;
 }
 
-.profile-image-container > img {
+.profile-header > img {
   border-radius: 50%;
   max-width: 128px;
   max-height: 128px;
+  box-shadow: 0px 0px 3px rgba(0, 0, 0, 0.5);
+  margin: 10px 0;
+}
 
+.profile-vanity {
+  text-align: center;
+  font-weight: 400;
+  font-size: 0.9rem;
+}
+
+.fb-profile-button {
+  cursor: pointer;
+  margin: 10px 0 0 0;
+  background-color: rgba(59, 89, 153, 1);
+  color: rgba(255, 255, 255, 0.9);
+  padding: 6px 32px;
+  font-size: 1rem;
+  font-family: 'Ubuntu', sans-serif;
+  border-radius: 1px;
+  box-shadow: inset 0 -2px rgba(54, 83, 140, 1);
+}
+
+.member-stats-text-container > p {
+  font-size: 1.1rem;
+  line-height: 1.5;
+  margin-bottom: 20px;
 }
 
 /* Media queries */
@@ -286,6 +315,10 @@ hr {
   .member-container > img {
     max-height: 64px;
     max-width: 64px;
+  }
+
+  .member-stats-text-container {
+    margin-top: 20px;
   }
 }
 

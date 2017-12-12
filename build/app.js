@@ -41,6 +41,22 @@ app.engine('html', handlebars({
                 return options.inverse(this);
             }
         },
+        if_has_gender: function (member, options) {
+            if (member.gender === 1 || member.gender === 2) {
+                return options.fn(this);
+            }
+            else {
+                return options.inverse(this);
+            }
+        },
+        if_is_male: function (member, options) {
+            if (member.gender === 2) {
+                return options.fn(this);
+            }
+            else {
+                return options.inverse(this);
+            }
+        },
         convert_to_time: function (unixTimestamp, options) {
             unixTimestamp = parseInt(unixTimestamp);
             var date = new Date(unixTimestamp);

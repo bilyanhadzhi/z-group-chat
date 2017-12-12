@@ -4,9 +4,35 @@
 
 <div class="outer-container">
   <div class="inner-container">
-    <div class="profile-image-container">
+    <div class="profile-header">
       <img src="https://graph.facebook.com/{{member.memberID}}/picture?height=256&width=256" alt="img" class="profile-image">
+      <h2 class="profile-name">{{member.name}}</h2>
+      {{#if member.vanity}}
+      <h5 class="profile-vanity">@{{member.vanity}}</h5>
+      {{/if}}
+      <a href="https://www.facebook.com/profile.php?id={{member.memberID}}" target="_blank" rel="noopener">
+        <button class="fb-profile-button">Profile</button>
+      </a>
     </div>
-    <h2 class="profile-name">{{member.name}}</h2>
+    <hr>
+    <div class="member-stats-text-container">
+      <p>
+        {{member.firstName}} has <b>n</b> words in <b>m</b> messages
+        since the beginning of the chat. That averages to about <b>n/m</b>
+        words per message.
+      </p>
+      <p>
+        {{#if_has_gender member}}
+          {{#if_is_male member}}
+            He is
+          {{else}}
+            She is
+          {{/if_is_male}}
+        {{else}}
+          They are
+        {{/if_has_gender}}
+        most active between <b>88:88</b> and <b>88:88</b>, same as <b>88%</b> of the chat's members.
+      </p>
+    </div>
   </div>
 </div>
