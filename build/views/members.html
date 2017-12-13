@@ -10,7 +10,9 @@
     <div class="members-list">
       {{#each members}}
       <div class="member-container">
-        <img src="https://graph.facebook.com/{{this.memberID}}/picture?height=64&width=64" alt="img">
+        <a href="/members/{{this.memberID}}">
+          <img src="https://graph.facebook.com/{{this.memberID}}/picture?height=96&width=96" alt="img">
+        </a>
         <div class="member-name-container">
           <a href="/members/{{this.memberID}}" class="member-name">{{this.name}}</a>
           {{#if this.vanity}}
@@ -21,12 +23,12 @@
           <span class="member-message-count">{{this.numOfMessages}} messages</span>
         </div>
         <div class="member-buttons">
-          <button>
-            <a href="/members/{{this.memberID}}">Stats</a>
-          </button>
-          <button>
+          <a href="/members/{{this.memberID}}">
+            <button>Stats</button>
+          </a>
+          <!-- <button>
             <a target="_blank" rel="noopener" href="https://www.facebook.com/profile.php?id={{this.memberID}}">Profile</a>
-          </button>
+          </button> -->
         </div>
       </div>
       {{/each}}

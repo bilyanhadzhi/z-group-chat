@@ -41,10 +41,10 @@ module.exports = (app: any, dirs: any) => {
     };
 
     Member
-    .find({})
-    .exec()
-    .catch((err: any) => console.error(err))
-    .then((members: any) => {
+      .find({})
+      .exec()
+      .catch((err: any) => console.error(err))
+      .then((members: any) => {
         const promises: Array<any> = [];
 
         members.forEach((member: any) => {
@@ -69,20 +69,105 @@ module.exports = (app: any, dirs: any) => {
   });
 
   app.get('/members/:id', (req: any, res: any) => {
+    const promises: Array<any> = [];
+
     Member
       .findOne({memberID: req.params.id})
       .lean()
       .exec()
       .catch((err: any) => console.error(err))
       .then((member: any) => {
-        console.log(member);
-        const data: any = {
-          title: '',
-          loggedIn: req.session.loggedIn,
-          member: member,
-        };
+        if (!member) {
+          res.redirect('/');
+        }
 
-        res.render('member', data);
+        const promises: Array<any> = [];
+
+        promises.push(
+          Message
+            .find({'senderID': member.memberID})
+            .count()
+            .exec()
+        );
+
+        promises.push(
+          Message
+            .find({'senderID': member.memberID, 'body': {'$ne': ''}})
+            .select('body timestamp senderID')
+            .sort({'timestamp': -1})
+            .exec()
+        );
+
+        Promise.all(promises)
+          .then((values: any) => {
+            // console.log(values);
+
+            const data: any = {
+              title: member.name,
+              loggedIn: req.session.loggedIn,
+              member: member,
+            };
+
+            data.member.stats = {
+              numOfWords: 0,
+              numOfMessages: 0,
+              wordsPerMessage: 0,
+              mostActiveHours: [null, null],
+            };
+
+            data.member.stats.numOfMessages = values[0];
+            data.member.stats.timeOfDayFrequency = {
+              labels: [
+                '00', '01', '02', '03', '04', '05',
+                '06', '07', '08', '09', '10', '11',
+                '12', '13', '14', '15', '16', '17',
+                '18', '19', '20', '21', '22', '23',
+              ],
+              values: [
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+              ],
+            };
+
+            const wordFrq: any = {};
+
+            values[1].forEach((message: any) => {
+              ++data.member.stats.timeOfDayFrequency.values[new Date(message.timestamp).getHours()];
+
+              if (message.body) {
+                const words = message.body.toLowerCase().match(/(\w+|[а-яА-Я]+)/g);
+
+                if (words) {
+                  words.forEach((word: any) => {
+                    if (wordFrq[word]) {
+                      ++wordFrq[word];
+                    } else {
+                      wordFrq[word] = 1;
+                    }
+
+                    ++data.member.stats.numOfWords;
+                  });
+                }
+              }
+            });
+
+            data.member.stats.wordsPerMessage = Math.round(
+              data.member.stats.numOfWords / data.member.stats.numOfMessages * 100
+            ) / 100;
+
+            let numOfMessagesMAH: number = 0;
+
+            for (let i = 0; i < data.member.stats.timeOfDayFrequency.values.length; ++i) {
+              if (data.member.stats.timeOfDayFrequency.values[i] > numOfMessagesMAH) {
+                numOfMessagesMAH = data.member.stats.timeOfDayFrequency.values[i];
+              }
+            }
+
+            data.member.stats.mostActiveHours[0] = data.member.stats.timeOfDayFrequency.values.indexOf(numOfMessagesMAH);
+            data.member.stats.mostActiveHours[1] = (data.member.stats.mostActiveHours[0] + 1) % 24;
+
+            res.render('member', data);
+          });
       });
   });
 
@@ -185,7 +270,8 @@ module.exports = (app: any, dirs: any) => {
           '18', '19', '20', '21', '22', '23',
         ],
         values: [
-          0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+          0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+          0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         ],
       },
     };
@@ -206,7 +292,6 @@ module.exports = (app: any, dirs: any) => {
       .exec()
       .catch((err: any) => console.error(err))
       .then((members: any) => {
-
         const membersWordFrq: any = {};
 
         members.forEach((member: any) => {
@@ -227,7 +312,6 @@ module.exports = (app: any, dirs: any) => {
         Promise.all(promises)
           .then((values: any) => {
             const messages = values.shift();
-
             const wordFrq: any = {};
 
             messages.forEach((message: any) => {

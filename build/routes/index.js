@@ -53,18 +53,80 @@ module.exports = function (app, dirs) {
         });
     });
     app.get('/members/:id', function (req, res) {
+        var promises = [];
         Member
             .findOne({ memberID: req.params.id })
             .lean()
             .exec()["catch"](function (err) { return console.error(err); })
             .then(function (member) {
-            console.log(member);
-            var data = {
-                title: '',
-                loggedIn: req.session.loggedIn,
-                member: member
-            };
-            res.render('member', data);
+            if (!member) {
+                res.redirect('/');
+            }
+            var promises = [];
+            promises.push(Message
+                .find({ 'senderID': member.memberID })
+                .count()
+                .exec());
+            promises.push(Message
+                .find({ 'senderID': member.memberID, 'body': { '$ne': '' } })
+                .select('body timestamp senderID')
+                .sort({ 'timestamp': -1 })
+                .exec());
+            Promise.all(promises)
+                .then(function (values) {
+                var data = {
+                    title: member.name,
+                    loggedIn: req.session.loggedIn,
+                    member: member
+                };
+                data.member.stats = {
+                    numOfWords: 0,
+                    numOfMessages: 0,
+                    wordsPerMessage: 0,
+                    mostActiveHours: [null, null]
+                };
+                data.member.stats.numOfMessages = values[0];
+                data.member.stats.timeOfDayFrequency = {
+                    labels: [
+                        '00', '01', '02', '03', '04', '05',
+                        '06', '07', '08', '09', '10', '11',
+                        '12', '13', '14', '15', '16', '17',
+                        '18', '19', '20', '21', '22', '23',
+                    ],
+                    values: [
+                        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                    ]
+                };
+                var wordFrq = {};
+                values[1].forEach(function (message) {
+                    ++data.member.stats.timeOfDayFrequency.values[new Date(message.timestamp).getHours()];
+                    if (message.body) {
+                        var words = message.body.toLowerCase().match(/(\w+|[а-яА-Я]+)/g);
+                        if (words) {
+                            words.forEach(function (word) {
+                                if (wordFrq[word]) {
+                                    ++wordFrq[word];
+                                }
+                                else {
+                                    wordFrq[word] = 1;
+                                }
+                                ++data.member.stats.numOfWords;
+                            });
+                        }
+                    }
+                });
+                data.member.stats.wordsPerMessage = Math.round(data.member.stats.numOfWords / data.member.stats.numOfMessages * 100) / 100;
+                var numOfMessagesMAH = 0;
+                for (var i = 0; i < data.member.stats.timeOfDayFrequency.values.length; ++i) {
+                    if (data.member.stats.timeOfDayFrequency.values[i] > numOfMessagesMAH) {
+                        numOfMessagesMAH = data.member.stats.timeOfDayFrequency.values[i];
+                    }
+                }
+                data.member.stats.mostActiveHours[0] = data.member.stats.timeOfDayFrequency.values.indexOf(numOfMessagesMAH);
+                data.member.stats.mostActiveHours[1] = (data.member.stats.mostActiveHours[0] + 1) % 24;
+                res.render('member', data);
+            });
         });
     });
     app.get('/auth', function (req, res) {
@@ -156,7 +218,8 @@ module.exports = function (app, dirs) {
                     '18', '19', '20', '21', '22', '23',
                 ],
                 values: [
-                    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                 ]
             }
         };

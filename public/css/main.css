@@ -58,12 +58,12 @@ hr {
   padding: 10px 0;
 }
 
-.member-container > img {
+.member-container > a > img {
   border-radius: 50%;
   min-height: 16px;
   margin-right: 8px;
-  max-height: 32px;
-  max-width: 32px;
+  max-height: 48px;
+  max-width: 48px;
   box-shadow: 0px 0px 2px rgba(0, 0, 0, 0.25);
 }
 
@@ -77,36 +77,37 @@ hr {
 }
 
 .member-name-container > .member-name {
-  font-size: 1rem;
+  font-size: 1.1rem;
   margin-left: -1px;
   color: rgba(0, 0, 0, 0.8);
 }
 
 .member-name-container > .member-vanity {
-  font-size: 0.6rem;
+  font-size: 0.75rem;
 }
 
 .member-name-container > .member-message-count {
-  padding-top: 3px;
-  font-size: 0.5rem;
+  font-size: 0.6rem;
 }
 
 .member-container > .member-buttons {
   margin-left: auto;
 }
 
-.member-buttons > button {
-  font-size: 1rem;
-  background: rgba(0, 0, 0, 0.75);
-  font: inherit;
-  border-radius: 5px;
-  height: 20px;
+.member-buttons > a {
+  font-size: 1.1rem;
+  border-radius: 1px;
 }
 
-.member-buttons > button > a {
+.member-buttons > a > button {
+  height: 20px;
+  width: 50px;
   padding: 5px;
   height: 100%;
+  background: rgba(0, 0, 0, 0.75);
   color: rgba(255, 255, 255, 0.9);
+  font-family: 'Ubuntu', sans-serif;
+  cursor: pointer;
 }
 
 #navbar {
@@ -179,8 +180,8 @@ hr {
 .chat-image {
   border-radius: 50%;
   margin-left: 9px;
-  min-width: 32px;
-  min-height: 32px;
+  max-width: 32px;
+  max-height: 32px;
 }
 
 .chat-message-container > .chat-message-body {
@@ -292,6 +293,7 @@ hr {
 
   .member-name-container > .member-message-count {
     font-size: 0.7rem;
+    padding-top: 3px;
   }
 }
 
@@ -312,7 +314,7 @@ hr {
     font-size: 1rem;
   }
 
-  .member-container > img {
+  .member-container > a > img {
     max-height: 64px;
     max-width: 64px;
   }

@@ -36,7 +36,7 @@ document.addEventListener('DOMContentLoaded', () => {
         msgContainer.classList.add('chat-message-container');
 
         const authorImgNode = document.createElement('img');
-        authorImgNode.setAttribute('src', message.senderThumbSrc);
+        authorImgNode.setAttribute('src', `https://graph.facebook.com/${message.senderID}/picture?height=64&width=64`);
         authorImgNode.setAttribute('alt', 'img');
         authorImgNode.classList.add('chat-image');
         msgContainer.appendChild(authorImgNode);
