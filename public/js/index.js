@@ -280,6 +280,10 @@ document.addEventListener('DOMContentLoaded', function () {
             fetch("/api/stats", { credentials: 'include' })["catch"](function (err) { return console.error(err); })
                 .then(function (response) { return response.json(); })
                 .then(function (data) {
+                var mainContainer = document.getElementsByClassName('inner-container hide')[0];
+                var loadingIconContainer = document.getElementsByClassName('loading-icon-container')[0];
+                mainContainer.classList.remove('hide');
+                loadingIconContainer.style.display = 'none';
                 var wordFrqList = [];
                 for (var i = 0; i < data.wordFrequency.labels.length; ++i) {
                     wordFrqList[i] = {};

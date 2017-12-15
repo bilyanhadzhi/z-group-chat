@@ -283,7 +283,7 @@ module.exports = (app: any, dirs: any) => {
         .find({'body': {'$ne': ''}})
         .select('body timestamp senderID')
         .sort({'timestamp': -1})
-        // .limit(500)
+        // .limit(1000)
         .exec()
     );
 

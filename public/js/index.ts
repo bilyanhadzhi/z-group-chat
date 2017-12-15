@@ -314,6 +314,11 @@ document.addEventListener('DOMContentLoaded', () => {
         .catch((err: any) => console.error(err))
         .then((response: any) => response.json())
         .then((data: any) => {
+          const mainContainer = document.getElementsByClassName('inner-container hide')[0];
+          const loadingIconContainer = document.getElementsByClassName('loading-icon-container')[0];
+
+          mainContainer.classList.remove('hide');
+          loadingIconContainer.style.display = 'none';
 
           const wordFrqList: any = [];
 
