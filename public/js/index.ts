@@ -114,7 +114,7 @@ document.addEventListener('DOMContentLoaded', () => {
       },
     },
     subjects: {
-      initChart(data, wordFrqList): void {
+      initChart(data: any, wordFrqList: any): void {
         const context = document.getElementById('subjects-chart');
         const self = this;
 
@@ -255,7 +255,7 @@ document.addEventListener('DOMContentLoaded', () => {
       },
     },
     timeOfDayFrequency: {
-      initChart(data): void {
+      initChart(data: any): void {
         const context = document.getElementById('time-of-day-frequency-chart');
 
         this.chart = new Chart(context, {
@@ -303,9 +303,51 @@ document.addEventListener('DOMContentLoaded', () => {
         this.chart.data.labels = data.timeOfDayFrequency.labels;
 
         this.chart.update();
-
-        console.log(data);
       },
+    },
+    monthFrequency: {
+      initChart(data: any): void {
+        const context = document.getElementById('month-frequency-chart');
+
+        this.chart = new Chart(context, {
+          type: 'bar',
+          data: {
+            labels: [],
+            datasets: [{
+              label: 'Number of messages',
+              data: [],
+              backgroundColor: 'rgba(211,47,47 ,0.5)',
+            }],
+          },
+          options: {
+            title: {
+              text: 'Number of messages by month',
+              display: true,
+              fontSize: 14,
+            },
+            tooltips: {
+              callbacks: {},
+            },
+            scales: {
+              xAxes: [{
+                // barPercentage: 0.5,
+              }],
+              yAxes: [{
+                ticks: {
+                  beginAtZero: true,
+                }
+              }],
+            },
+            responsive: true,
+            maintainAspectRatio: false,
+          },
+        });
+
+        this.chart.data.datasets[0].data = data.monthFrequency.values;
+        this.chart.data.labels = data.monthFrequency.labels;
+
+        this.chart.update();
+      }
     },
     init(): void {
       Chart.defaults.global.defaultFontFamily = '"Ubuntu", sans-serif';
@@ -339,6 +381,7 @@ document.addEventListener('DOMContentLoaded', () => {
           this.wordLeaderboard.initChart(data);
           this.subjects.initChart(data, wordFrqList);
           this.timeOfDayFrequency.initChart(data);
+          this.monthFrequency.initChart(data);
         });
     },
   };

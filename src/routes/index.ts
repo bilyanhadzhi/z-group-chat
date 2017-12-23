@@ -274,6 +274,15 @@ module.exports = (app: any, dirs: any) => {
           0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         ],
       },
+      monthFrequency: {
+        labels: [
+          'January', 'February', 'March', 'April', 'May', 'June',
+          'July', 'August', 'September', 'October', 'November', 'December',
+        ],
+        values: [
+          0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        ],
+      },
     };
 
     const promises: Array<Promise<any>> = [];
@@ -315,7 +324,8 @@ module.exports = (app: any, dirs: any) => {
             const wordFrq: any = {};
 
             messages.forEach((message: any) => {
-              ++stats.timeOfDayFrequency.values[new Date(message.timestamp).getHours()];
+              ++stats.timeOfDayFrequency.values[(new Date(message.timestamp).getUTCHours() + 2) % 24];
+              ++stats.monthFrequency.values[new Date(message.timestamp).getMonth()];
 
               if (message.body) {
                 const words = message.body.toLowerCase().match(/(\w+|[а-яА-Я]+)/g);

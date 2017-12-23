@@ -221,6 +221,15 @@ module.exports = function (app, dirs) {
                     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                 ]
+            },
+            monthFrequency: {
+                labels: [
+                    'January', 'February', 'March', 'April', 'May', 'June',
+                    'July', 'August', 'September', 'October', 'November', 'December',
+                ],
+                values: [
+                    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                ]
             }
         };
         var promises = [];
@@ -249,7 +258,8 @@ module.exports = function (app, dirs) {
                 var messages = values.shift();
                 var wordFrq = {};
                 messages.forEach(function (message) {
-                    ++stats.timeOfDayFrequency.values[new Date(message.timestamp).getHours()];
+                    ++stats.timeOfDayFrequency.values[(new Date(message.timestamp).getUTCHours() + 2) % 24];
+                    ++stats.monthFrequency.values[new Date(message.timestamp).getMonth()];
                     if (message.body) {
                         var words = message.body.toLowerCase().match(/(\w+|[а-яА-Я]+)/g);
                         if (words) {

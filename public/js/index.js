@@ -271,7 +271,45 @@ document.addEventListener('DOMContentLoaded', function () {
                 this.chart.data.datasets[0].data = data.timeOfDayFrequency.values;
                 this.chart.data.labels = data.timeOfDayFrequency.labels;
                 this.chart.update();
-                console.log(data);
+            }
+        },
+        monthFrequency: {
+            initChart: function (data) {
+                var context = document.getElementById('month-frequency-chart');
+                this.chart = new Chart(context, {
+                    type: 'bar',
+                    data: {
+                        labels: [],
+                        datasets: [{
+                                label: 'Number of messages',
+                                data: [],
+                                backgroundColor: 'rgba(211,47,47 ,0.5)'
+                            }]
+                    },
+                    options: {
+                        title: {
+                            text: 'Number of messages by month',
+                            display: true,
+                            fontSize: 14
+                        },
+                        tooltips: {
+                            callbacks: {}
+                        },
+                        scales: {
+                            xAxes: [{}],
+                            yAxes: [{
+                                    ticks: {
+                                        beginAtZero: true
+                                    }
+                                }]
+                        },
+                        responsive: true,
+                        maintainAspectRatio: false
+                    }
+                });
+                this.chart.data.datasets[0].data = data.monthFrequency.values;
+                this.chart.data.labels = data.monthFrequency.labels;
+                this.chart.update();
             }
         },
         init: function () {
@@ -299,6 +337,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 _this.wordLeaderboard.initChart(data);
                 _this.subjects.initChart(data, wordFrqList);
                 _this.timeOfDayFrequency.initChart(data);
+                _this.monthFrequency.initChart(data);
             });
         }
     };
