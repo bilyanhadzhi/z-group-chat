@@ -178,11 +178,11 @@ module.exports = function (app, dirs) {
         if (params.after) {
             Message
                 .find({ 'timestamp': { '$gt': params.after } })
-                .sort({ 'timestamp': -1 })
+                .sort({ 'timestamp': 1 })
                 .limit(params.amount)
                 .exec()["catch"](function (err) { return console.error(err); })
                 .then(function (messages) {
-                res.send(messages);
+                res.send(messages.reverse());
             });
         }
         else {

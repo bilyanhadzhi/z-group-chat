@@ -56,8 +56,12 @@ document.addEventListener('DOMContentLoaded', () => {
         } else if (isTextMessage && isEmpty) {
           const msgBodyNode = document.createElement('img');
 
-          if (message.attachments[0].hasOwnProperty('previewUrl')) {
-            msgBodyNode.setAttribute('src', message.attachments[0].previewUrl);
+          if (message.attachments.length === 1) {
+            if (message.attachments[0].hasOwnProperty('previewUrl')) {
+              msgBodyNode.setAttribute('src', message.attachments[0].previewUrl);
+            }
+          } else if (message.attachments.length > 1) {
+            // TODO
           }
 
           msgBodyNode.setAttribute('alt', 'can\'t display attachment');
@@ -129,11 +133,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
       this.request.onload = () => {
         if (this.request.status>= 200 && this.request.status < 400) {
-          this.messages = JSON.parse(this.request.responseText);
-          this.messages = this.messages.reverse();
+          const newMessages = JSON.parse(this.request.responseText);
 
-          console.log(this.messages);
+          if (newMessages.length < 1) {
+            return;
+          } else if (newMessages.length < 50 && after) {
+            return;
+          }
 
+          this.messages = newMessages.reverse();
           this.render();
         } else {
           console.error('Server returned an error');
@@ -143,7 +151,7 @@ document.addEventListener('DOMContentLoaded', () => {
       this.request.send();
     },
     loadFirstPage(): void {
-      this.loadMessages(undefined, undefined, undefined);
+      this.loadMessages(undefined, 1429213431324, undefined);
     },
     loadPrevPage(): void {
       this.loadMessages(this.messages[0].timestamp, undefined, undefined);

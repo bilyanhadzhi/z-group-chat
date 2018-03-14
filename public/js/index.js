@@ -140,7 +140,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     },
                     'Английски': {
                         count: 0,
-                        regex: /английски|angliiski|^ае$|^ае$|англ|angl/i
+                        regex: /английски|angliiski|^ае$|^ае$|^англ$|^angl$/i
                     },
                     'Немски': {
                         count: 0,

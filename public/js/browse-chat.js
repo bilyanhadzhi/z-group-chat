@@ -48,8 +48,13 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
                 else if (isTextMessage && isEmpty) {
                     var msgBodyNode = document.createElement('img');
-                    if (message.attachments[0].hasOwnProperty('previewUrl')) {
-                        msgBodyNode.setAttribute('src', message.attachments[0].previewUrl);
+                    if (message.attachments.length === 1) {
+                        if (message.attachments[0].hasOwnProperty('previewUrl')) {
+                            msgBodyNode.setAttribute('src', message.attachments[0].previewUrl);
+                        }
+                    }
+                    else if (message.attachments.length > 1) {
+                        // TODO
                     }
                     msgBodyNode.setAttribute('alt', 'can\'t display attachment');
                     msgBodyNode.classList.add('chat-message-attachment');
@@ -110,9 +115,14 @@ document.addEventListener('DOMContentLoaded', function () {
             this.request.open('GET', url);
             this.request.onload = function () {
                 if (_this.request.status >= 200 && _this.request.status < 400) {
-                    _this.messages = JSON.parse(_this.request.responseText);
-                    _this.messages = _this.messages.reverse();
-                    console.log(_this.messages);
+                    var newMessages = JSON.parse(_this.request.responseText);
+                    if (newMessages.length < 1) {
+                        return;
+                    }
+                    else if (newMessages.length < 50 && after) {
+                        return;
+                    }
+                    _this.messages = newMessages.reverse();
                     _this.render();
                 }
                 else {
@@ -122,7 +132,7 @@ document.addEventListener('DOMContentLoaded', function () {
             this.request.send();
         },
         loadFirstPage: function () {
-            this.loadMessages(undefined, undefined, undefined);
+            this.loadMessages(undefined, 1429213431324, undefined);
         },
         loadPrevPage: function () {
             this.loadMessages(this.messages[0].timestamp, undefined, undefined);

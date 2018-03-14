@@ -227,14 +227,14 @@ module.exports = (app: any, dirs: any) => {
 
     if (params.after) {
       Message
-      .find({'timestamp': { '$gt': params.after }})
-      .sort({'timestamp': -1})
-      .limit(params.amount)
-      .exec()
-      .catch((err: any) => console.error(err))
-      .then((messages: any) => {
-        res.send(messages);
-      });
+        .find({'timestamp': { '$gt': params.after }})
+        .sort({'timestamp': 1})
+        .limit(params.amount)
+        .exec()
+        .catch((err: any) => console.error(err))
+        .then((messages: any) => {
+          res.send(messages.reverse());
+        });
     } else {
       Message
         .find({'timestamp': { '$lte': params.upTo }})
