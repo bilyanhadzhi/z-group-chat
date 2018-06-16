@@ -19,18 +19,18 @@
   },
   "homepage": "https://github.com/bilyanhadzhi/z-group-chat#readme",
   "dependencies": {
-    "bcrypt": "^1.0.3",
-    "body-parser": "^1.18.2",
+    "bcrypt": "^2.0.1",
+    "body-parser": "^1.18.3",
     "express": "^4.16.3",
     "express-handlebars": "^3.0.0",
     "express-session": "^1.15.6",
     "facebook-chat-api": "github:Schmavery/facebook-chat-api",
     "jsonfile": "^3.0.1",
-    "mongoose": "^4.13.12",
+    "mongoose": "^4.13.14",
     "passport": "^0.4.0",
     "passport-facebook": "^2.1.1"
   },
   "devDependencies": {
-    "nodemon": "^1.17.2"
+    "nodemon": "^1.17.5"
   }
 }

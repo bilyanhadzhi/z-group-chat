@@ -110,7 +110,7 @@ const bot: any = {
         const interval = setInterval(() => loadMessages(this.api), 5000);
 
         function loadMessages(api: any): void {
-          api.getThreadHistoryGraphQL(threadID, 501, timestamp, (err: any, messages: any) => {
+          api.getThreadHistory(threadID, 501, timestamp, (err: any, messages: any) => {
             if (timestamp != undefined) {
               messages.pop();
             }

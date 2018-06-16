@@ -97,7 +97,7 @@ var bot = {
             var toInsert = [];
             var interval = setInterval(function () { return loadMessages(_this.api); }, 5000);
             function loadMessages(api) {
-                api.getThreadHistoryGraphQL(threadID, 501, timestamp, function (err, messages) {
+                api.getThreadHistory(threadID, 501, timestamp, function (err, messages) {
                     if (timestamp != undefined) {
                         messages.pop();
                     }
