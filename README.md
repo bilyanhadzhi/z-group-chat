@@ -13,8 +13,6 @@ Here are some of the criteria:
 
 
 ## Pictures
----
-
 ![Login](doc/img/z_group_usage_1.png)
 
 ---
