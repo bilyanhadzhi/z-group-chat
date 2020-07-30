@@ -1,4 +1,4 @@
-# z-group-chat
+# Z Group Chat vizualization
 
 ## Idea
 To make a database of all the messages in my grade's group chat, and visualize data related to it.
@@ -13,7 +13,18 @@ Here are some of the criteria:
 
 
 ## Pictures
+---
+
 ![Login](doc/img/z_group_usage_1.png)
+
+---
+
 ![Data vizualization](doc/img/z_group_usage_0.png)
+
+---
+
 ![Profile info](doc/img/z_group_usage_2.png)
+
+---
+
 ![Loading gif](doc/img/z_group_usage.gif)
